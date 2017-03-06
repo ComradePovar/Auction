@@ -3837,7 +3837,7 @@
 											"height": 13,
 											"autoResize": false,
 											"underline": false,
-											"text": "-owner: Client",
+											"text": "-owner: Person",
 											"horizontalAlignment": 0,
 											"verticalAlignment": 5,
 											"wordWrap": false
@@ -3921,7 +3921,7 @@
 											"height": 13,
 											"autoResize": false,
 											"underline": false,
-											"text": "+Product(title: String, owner: Client, description: String = \"\", count: Integer = 1, price: Decimal)",
+											"text": "+Product(title: String, owner: Person, description: String = \"\", count: Integer = 1, price: Decimal)",
 											"horizontalAlignment": 0,
 											"verticalAlignment": 5,
 											"wordWrap": false
@@ -3938,7 +3938,7 @@
 									"containerExtending": false,
 									"left": 368,
 									"top": 409,
-									"width": 557,
+									"width": 557.17431640625,
 									"height": 23,
 									"autoResize": false
 								},
@@ -4099,7 +4099,7 @@
 											"height": 13,
 											"autoResize": false,
 											"underline": false,
-											"text": "Client",
+											"text": "Person",
 											"horizontalAlignment": 2,
 											"verticalAlignment": 5,
 											"wordWrap": false
@@ -7477,7 +7477,7 @@
 											"height": 13,
 											"autoResize": false,
 											"underline": false,
-											"text": "+getOwner(): Client",
+											"text": "+getOwner(): Person",
 											"horizontalAlignment": 0,
 											"verticalAlignment": 5,
 											"wordWrap": false
@@ -7506,7 +7506,7 @@
 											"height": 13,
 											"autoResize": false,
 											"underline": false,
-											"text": "+setOwner(value: Client)",
+											"text": "+setOwner(value: Person)",
 											"horizontalAlignment": 0,
 											"verticalAlignment": 5,
 											"wordWrap": false
@@ -10187,7 +10187,7 @@
 					"_parent": {
 						"$ref": "AAAAAAFF+qBWK6M3Z8Y="
 					},
-					"name": "Client",
+					"name": "Person",
 					"stereotype": "interface",
 					"visibility": "public",
 					"operations": [
