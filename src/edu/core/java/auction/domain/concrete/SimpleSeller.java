@@ -1,23 +1,23 @@
 package edu.core.java.auction.domain.concrete;
 
-import edu.core.java.auction.domain.interfaces.Client;
+import edu.core.java.auction.domain.interfaces.Person;
 import edu.core.java.auction.domain.interfaces.DomainObject;
 import edu.core.java.auction.domain.interfaces.Product;
 import edu.core.java.auction.domain.interfaces.Seller;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import java.util.ArrayList;
+import java.util.Set;
 
 /**
  * Created by Maxim on 19.02.2017.
  */
 public class SimpleSeller extends DomainObject
-                          implements Client, Seller {
+                          implements Person, Seller {
     private String name;
     private String phone;
     private double accountBalance;
     private double comissionPercentage;
-    private ArrayList<Product> products;
+    private Set<Product> products;
 
 
     @Override
@@ -69,7 +69,7 @@ public class SimpleSeller extends DomainObject
     }
 
     @Override
-    public ArrayList<Product> getProducts() {
+    public Set<Product> getProducts() {
         return products;
     }
 

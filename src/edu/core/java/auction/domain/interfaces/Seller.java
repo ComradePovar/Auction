@@ -1,6 +1,6 @@
 package edu.core.java.auction.domain.interfaces;
 
-import java.util.ArrayList;
+import java.util.Set;
 
 /**
  * Created by Maxim on 19.02.2017.
@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public interface Seller {
     void setComissionPercentage(double value);
     double getComissionPercentage();
-    ArrayList<Product> getProducts();
+    Set<Product> getProducts();
     void addProduct(Product product);
     void removeProduct(Long productId);
 }

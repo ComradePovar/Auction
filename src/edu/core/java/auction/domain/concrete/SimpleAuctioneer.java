@@ -6,16 +6,17 @@ import edu.core.java.auction.domain.interfaces.Product;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 /**
  * Created by Maxim on 19.02.2017.
  */
 public class SimpleAuctioneer extends DomainObject
                               implements Auctioneer {
-    private ArrayList<Lot> lots;
+    private Set<Lot> lots;
 
     @Override
-    public ArrayList<Lot> getLots() {
+    public Set<Lot> getLots() {
         return lots;
     }
 

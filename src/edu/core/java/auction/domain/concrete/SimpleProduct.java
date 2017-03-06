@@ -1,6 +1,6 @@
 package edu.core.java.auction.domain.concrete;
 
-import edu.core.java.auction.domain.interfaces.Client;
+import edu.core.java.auction.domain.interfaces.Person;
 import edu.core.java.auction.domain.interfaces.DomainObject;
 import edu.core.java.auction.domain.interfaces.Product;
 
@@ -12,7 +12,7 @@ public class SimpleProduct extends DomainObject
     private String title;
     private String description;
     private int count;
-    private Client owner;
+    private Person owner;
     private double sellerPrice;
 
     @Override
@@ -31,12 +31,12 @@ public class SimpleProduct extends DomainObject
     }
 
     @Override
-    public Client getOwner() {
+    public Person getOwner() {
         return owner;
     }
 
     @Override
-    public void setOwner(Client value) {
+    public void setOwner(Person value) {
         this.owner = value;
     }
 

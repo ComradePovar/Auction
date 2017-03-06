@@ -1,25 +1,27 @@
 package edu.core.java.auction.domain.concrete;
 
 import edu.core.java.auction.domain.interfaces.Buyer;
-import edu.core.java.auction.domain.interfaces.Client;
+import edu.core.java.auction.domain.interfaces.Person;
 import edu.core.java.auction.domain.interfaces.DomainObject;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by Maxim on 19.02.2017.
  */
 public class SimpleBuyer extends DomainObject
-                         implements Client, Buyer {
+                         implements Person, Buyer {
 
     private String name;
     private String phone;
     private double accountBalance;
-    private ArrayList<Bid> bids;
+    private Set<Bid> bids;
 
     public SimpleBuyer(String name){
-        bids = new ArrayList<Bid>();
+        bids = new HashSet<Bid>();
     }
     @Override
     public void createBid(Lot lot, double bidAmount) {
@@ -32,7 +34,7 @@ public class SimpleBuyer extends DomainObject
     }
 
     @Override
-    public ArrayList<Bid> getBids() {
+    public Set<Bid> getBids() {
         return bids;
     }
 

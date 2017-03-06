@@ -7,8 +7,8 @@ public interface Product {
     String getTitle();
     String getDescription();
     int getCount();
-    Client getOwner();
-    void setOwner(Client value);
+    Person getOwner();
+    void setOwner(Person value);
     double getSellerPrice();
     void setSellerPrice(double value);
     void setCount(int value);

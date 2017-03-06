@@ -10,7 +10,7 @@ import java.util.Map;
  * Created by Max on 06.03.2017.
  */
 public abstract class Repository<V extends ValueObject> {
-    protected Map<Long, V> repository;
+    private Map<Long, V> repository;
 
     public void add(V object){
         repository.put(object.getId(), object);

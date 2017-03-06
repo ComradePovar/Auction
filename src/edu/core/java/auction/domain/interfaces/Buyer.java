@@ -2,7 +2,7 @@ package edu.core.java.auction.domain.interfaces;
 import edu.core.java.auction.domain.concrete.Bid;
 import edu.core.java.auction.domain.concrete.Lot;
 
-import java.util.ArrayList;
+import java.util.Set;
 
 /**
  * Created by Maxim on 19.02.2017.
@@ -10,5 +10,5 @@ import java.util.ArrayList;
 public interface Buyer {
     void createBid(Lot lot, double bidAmount);
     void removeBid(Long bidId);
-    ArrayList<Bid> getBids();
+    Set<Bid> getBids();
 }
