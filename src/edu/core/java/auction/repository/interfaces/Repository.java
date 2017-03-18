@@ -4,6 +4,7 @@ import edu.core.java.auction.vo.Bid;
 import edu.core.java.auction.vo.ValueObject;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
 
 /**
@@ -15,8 +16,8 @@ public abstract class Repository<V extends ValueObject> {
     public void add(V object){
         repository.put(object.getId(), object);
     }
-    public void update(Long id, V object){
-        repository.replace(id, object);
+    public void update(V object){
+        repository.replace(object.getId(), object);
     }
     public V find(Long id){
         return repository.get(id);

@@ -1,5 +1,7 @@
 package edu.core.java.auction.vo;
 
+import edu.core.java.auction.domain.interfaces.Person;
+
 import java.util.ArrayList;
 
 /**
@@ -11,4 +13,14 @@ public class SimpleSeller extends ValueObject {
     public double accountBalance;
     public double comissionPercentage;
     public ArrayList<Long> products;
+
+    public SimpleSeller(){
+        this.id = ++maxId;
+    }
+    public SimpleSeller(String name, String phone, double accountBalance){
+        this.name = name;
+        this.phone = phone;
+        this.accountBalance = accountBalance;
+        this.id = ++maxId;
+    }
 }

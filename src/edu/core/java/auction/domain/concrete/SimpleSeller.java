@@ -19,6 +19,15 @@ public class SimpleSeller extends DomainObject
     private double comissionPercentage;
     private Set<Product> products;
 
+    public SimpleSeller(Long id){
+        this.id = id;
+    }
+    public SimpleSeller(Long id, String name, String phone, double accountBalance){
+        this.id = id;
+        this.name = name;
+        this.phone = phone;
+        this.accountBalance = accountBalance;
+    }
 
     @Override
     public String getName() {
@@ -81,5 +90,10 @@ public class SimpleSeller extends DomainObject
     @Override
     public void removeProduct(Long productId) {
         throw new NotImplementedException();
+    }
+
+    @Override
+    public Long getId(){
+        return id;
     }
 }

@@ -8,6 +8,7 @@ import java.util.Date;
  */
 public class Lot extends ValueObject {
     public Long currentBidId;
+    public Long auctioneerId;
     public double startPrice;
     public Date startDate;
     public Date endDate;

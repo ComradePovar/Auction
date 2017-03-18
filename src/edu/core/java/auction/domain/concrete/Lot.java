@@ -1,5 +1,6 @@
 package edu.core.java.auction.domain.concrete;
 
+import edu.core.java.auction.domain.interfaces.Auctioneer;
 import edu.core.java.auction.domain.interfaces.DomainObject;
 import edu.core.java.auction.domain.interfaces.Product;
 
@@ -10,15 +11,17 @@ import java.util.Date;
  */
 public class Lot extends DomainObject {
     private Bid currentBid;
+    private Auctioneer auctioneer;
     private double startPrice;
     private Date startDate;
     private Date endDate;
     private Product product;
 
-    public Lot(double startPrice, Date startDate, Date endDate, Product product){
+    public Lot(double startPrice, Date startDate, Date endDate, Product product, Auctioneer auctioneer){
         this.startDate = startDate;
         this.endDate = endDate;
         this.startPrice = startPrice;
+        this.auctioneer = auctioneer;
     }
 
     public double getStartPrice(){

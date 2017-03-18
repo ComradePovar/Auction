@@ -11,4 +11,5 @@ public interface Person {
     void withdrawMoney(double amount);
     void setName(String value);
     void setPhone(String value);
+    Long getId();
 }

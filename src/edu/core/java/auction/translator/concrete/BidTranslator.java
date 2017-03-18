@@ -1,19 +1,19 @@
 package edu.core.java.auction.translator.concrete;
 
+import edu.core.java.auction.domain.concrete.Bid;
 import edu.core.java.auction.translator.interfaces.Translator;
-import edu.core.java.auction.vo.Bid;
 
 /**
  * Created by Max on 09.03.2017.
  */
-public class BidTranslator implements Translator<Bid,edu.core.java.auction.domain.concrete.Bid> {
+public class BidTranslator implements Translator<edu.core.java.auction.vo.Bid, Bid> {
     @Override
-    public edu.core.java.auction.domain.concrete.Bid convertToDomainObject(Bid value) {
+    public Bid convertToDomainObject(edu.core.java.auction.vo.Bid value) {
         return null;
     }
 
     @Override
-    public Bid convertToValueObject(edu.core.java.auction.domain.concrete.Bid value) {
+    public edu.core.java.auction.vo.Bid convertToValueObject(Bid value) {
         return null;
     }
 }

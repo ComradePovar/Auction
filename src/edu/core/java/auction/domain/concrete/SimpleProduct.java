@@ -15,6 +15,18 @@ public class SimpleProduct extends DomainObject
     private Person owner;
     private double sellerPrice;
 
+    public SimpleProduct(Long id){
+        this.id = id;
+    }
+
+    public SimpleProduct(Long id, String title, String description, int count, Person owner, double sellerPrice){
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.count = count;
+        this.owner = owner;
+        this.sellerPrice = sellerPrice;
+    }
     @Override
     public String getTitle() {
         return title;

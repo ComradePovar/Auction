@@ -5,9 +5,7 @@ import edu.core.java.auction.domain.interfaces.Person;
 import edu.core.java.auction.domain.interfaces.DomainObject;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Created by Maxim on 19.02.2017.
@@ -18,10 +16,16 @@ public class SimpleBuyer extends DomainObject
     private String name;
     private String phone;
     private double accountBalance;
-    private Set<Bid> bids;
+    private HashSet<Bid> bids = new HashSet<Bid>();
 
-    public SimpleBuyer(String name){
-        bids = new HashSet<Bid>();
+    public SimpleBuyer(Long id){
+        this.id = id;
+    }
+    public SimpleBuyer(Long id, String name, String phone, double accountBalance){
+        this.id = id;
+        this.name = name;
+        this.phone = phone;
+        this.accountBalance = accountBalance;
     }
     @Override
     public void createBid(Lot lot, double bidAmount) {
@@ -34,7 +38,7 @@ public class SimpleBuyer extends DomainObject
     }
 
     @Override
-    public Set<Bid> getBids() {
+    public HashSet<Bid> getBids() {
         return bids;
     }
 
@@ -74,5 +78,10 @@ public class SimpleBuyer extends DomainObject
     @Override
     public void setPhone(String value) {
         this.phone = value;
+    }
+
+    @Override
+    public Long getId(){
+        return id;
     }
 }
