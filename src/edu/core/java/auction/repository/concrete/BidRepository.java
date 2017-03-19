@@ -9,5 +9,4 @@ import java.util.Collection;
  * Created by Max on 06.03.2017.
  */
 public class BidRepository extends Repository<Bid> {
-
 }

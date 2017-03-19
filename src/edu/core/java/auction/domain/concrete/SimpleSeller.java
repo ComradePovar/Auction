@@ -6,6 +6,7 @@ import edu.core.java.auction.domain.interfaces.Product;
 import edu.core.java.auction.domain.interfaces.Seller;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -14,29 +15,23 @@ import java.util.Set;
 public class SimpleSeller extends DomainObject
                           implements Person, Seller {
     private String name;
-    private String phone;
     private double accountBalance;
     private double comissionPercentage;
-    private Set<Product> products;
+    private HashSet<Product> products = new HashSet<Product>();
 
     public SimpleSeller(Long id){
         this.id = id;
     }
-    public SimpleSeller(Long id, String name, String phone, double accountBalance){
+    public SimpleSeller(Long id, String name, double accountBalance, double comissionPercentage){
         this.id = id;
         this.name = name;
-        this.phone = phone;
         this.accountBalance = accountBalance;
+        this.comissionPercentage = comissionPercentage;
     }
 
     @Override
     public String getName() {
         return name;
-    }
-
-    @Override
-    public String getPhone() {
-        return phone;
     }
 
     @Override
@@ -63,11 +58,6 @@ public class SimpleSeller extends DomainObject
     }
 
     @Override
-    public void setPhone(String value) {
-        this.phone = value;
-    }
-
-    @Override
     public void setComissionPercentage(double value) {
         this.comissionPercentage = value;
     }
@@ -83,17 +73,7 @@ public class SimpleSeller extends DomainObject
     }
 
     @Override
-    public void addProduct(Product product) {
-        throw new NotImplementedException();
-    }
-
-    @Override
-    public void removeProduct(Long productId) {
-        throw new NotImplementedException();
-    }
-
-    @Override
-    public Long getId(){
-        return id;
+    public void setAccountBalance(double amount) {
+        accountBalance = amount;
     }
 }

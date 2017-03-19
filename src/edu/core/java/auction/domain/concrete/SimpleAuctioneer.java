@@ -39,14 +39,4 @@ public class SimpleAuctioneer extends DomainObject
     public HashSet<Lot> getLots() {
         return lots;
     }
-
-    @Override
-    public void createLot(Product product) {
-        throw new NotImplementedException();
-    }
-
-    @Override
-    public void removeLot(Long lotId) {
-        throw new NotImplementedException();
-    }
 }

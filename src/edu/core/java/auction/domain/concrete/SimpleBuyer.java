@@ -14,17 +14,15 @@ public class SimpleBuyer extends DomainObject
                          implements Person, Buyer {
 
     private String name;
-    private String phone;
     private double accountBalance;
     private HashSet<Bid> bids = new HashSet<Bid>();
 
     public SimpleBuyer(Long id){
         this.id = id;
     }
-    public SimpleBuyer(Long id, String name, String phone, double accountBalance){
+    public SimpleBuyer(Long id, String name, double accountBalance){
         this.id = id;
         this.name = name;
-        this.phone = phone;
         this.accountBalance = accountBalance;
     }
     @Override
@@ -48,13 +46,13 @@ public class SimpleBuyer extends DomainObject
     }
 
     @Override
-    public String getPhone() {
-        return phone;
+    public double getAccountBalance() {
+        return accountBalance;
     }
 
     @Override
-    public double getAccountBalance() {
-        return accountBalance;
+    public void setAccountBalance(double amount) {
+        accountBalance = amount;
     }
 
     @Override
@@ -73,11 +71,6 @@ public class SimpleBuyer extends DomainObject
     @Override
     public void setName(String value) {
         this.name = value;
-    }
-
-    @Override
-    public void setPhone(String value) {
-        this.phone = value;
     }
 
     @Override

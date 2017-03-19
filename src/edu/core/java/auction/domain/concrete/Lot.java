@@ -3,8 +3,10 @@ package edu.core.java.auction.domain.concrete;
 import edu.core.java.auction.domain.interfaces.Auctioneer;
 import edu.core.java.auction.domain.interfaces.DomainObject;
 import edu.core.java.auction.domain.interfaces.Product;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.Date;
+import java.util.Timer;
 
 /**
  * Created by Maxim on 19.02.2017.
@@ -22,18 +24,26 @@ public class Lot extends DomainObject {
         this.endDate = endDate;
         this.startPrice = startPrice;
         this.auctioneer = auctioneer;
+        this.product = product;
     }
 
     public double getStartPrice(){
         return startPrice;
     }
 
-    public void setCurrentBid(Bid currentBid) {
-        this.currentBid = currentBid;
+    public void setCurrentBid(Bid bid) {
+        if (currentBid == null) {
+            if (startPrice <= bid.getBidAmount())
+                this.currentBid = bid;
+        } else {
+            if (bid.getBidAmount() > currentBid.getBidAmount())
+                this.currentBid = bid;
+            else
+                throw new NotImplementedException();
+        }
     }
 
     public Bid getCurrentBid() {
-
         return currentBid;
     }
 
@@ -47,6 +57,9 @@ public class Lot extends DomainObject {
 
     public Date getStartDate(){
         return startDate;
+    }
 
+    public Auctioneer getAuctioneer(){
+        return auctioneer;
     }
 }

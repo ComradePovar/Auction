@@ -8,7 +8,8 @@ import java.util.Set;
 public interface Seller {
     void setComissionPercentage(double value);
     double getComissionPercentage();
+    double getAccountBalance();
+    void setAccountBalance(double amount);
     Set<Product> getProducts();
-    void addProduct(Product product);
-    void removeProduct(Long productId);
+    Long getId();
 }

@@ -13,4 +13,13 @@ public class Lot extends ValueObject {
     public Date startDate;
     public Date endDate;
     public Long productId;
+
+    public Lot(double startPrice, Date startDate, Date endDate, Long productId, Long auctioneerId){
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.startPrice = startPrice;
+        this.auctioneerId = auctioneerId;
+        this.productId = productId;
+        this.id = ++maxId;
+    }
 }

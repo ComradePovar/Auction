@@ -5,7 +5,7 @@ package edu.core.java.auction.vo;
  */
 public abstract class ValueObject {
     protected Long id;
-    protected static Long maxId;
+    protected static Long maxId = (long)0;
 
     public Long getId() { return id; }
 }

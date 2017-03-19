@@ -9,18 +9,16 @@ import java.util.ArrayList;
  */
 public class SimpleSeller extends ValueObject {
     public String name;
-    public String phone;
     public double accountBalance;
     public double comissionPercentage;
-    public ArrayList<Long> products;
 
     public SimpleSeller(){
         this.id = ++maxId;
     }
-    public SimpleSeller(String name, String phone, double accountBalance){
+    public SimpleSeller(String name, double accountBalance, double comissionPercentage){
         this.name = name;
-        this.phone = phone;
         this.accountBalance = accountBalance;
+        this.comissionPercentage = comissionPercentage;
         this.id = ++maxId;
     }
 }

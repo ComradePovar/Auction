@@ -5,4 +5,8 @@ package edu.core.java.auction.domain.interfaces;
  */
 public abstract class DomainObject {
     protected Long id;
+
+    public Long getId(){
+        return id;
+    }
 }

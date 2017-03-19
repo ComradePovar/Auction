@@ -7,8 +7,11 @@ import java.util.HashSet;
 /**
  * Created by Maxim on 19.02.2017.
  */
-public interface Buyer {
+public interface Buyer extends Person{
     void createBid(Lot lot, double bidAmount);
     void removeBid(Long bidId);
+    double getAccountBalance();
+    void setAccountBalance(double amount);
     HashSet<Bid> getBids();
+    Long getId();
 }

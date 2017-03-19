@@ -9,7 +9,6 @@ import java.util.ArrayList;
  */
 public class SimpleBuyer extends ValueObject{
     public String name;
-    public String phone;
     public double accountBalance;
     public ArrayList<Long> bids;
 
@@ -17,9 +16,8 @@ public class SimpleBuyer extends ValueObject{
         this.id = ++maxId;
     }
 
-    public SimpleBuyer(String name, String phone, double accountBalance){
+    public SimpleBuyer(String name, double accountBalance){
         this.name = name;
-        this.phone = phone;
         this.accountBalance = accountBalance;
         this.id = ++maxId;
     }

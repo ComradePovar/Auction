@@ -5,11 +5,9 @@ package edu.core.java.auction.domain.interfaces;
  */
 public interface Person {
     String getName();
-    String getPhone();
     double getAccountBalance();
     void addMoney(double amount);
     void withdrawMoney(double amount);
     void setName(String value);
-    void setPhone(String value);
     Long getId();
 }

@@ -2,6 +2,7 @@ package edu.core.java.auction.domain.concrete;
 
 import edu.core.java.auction.domain.interfaces.Buyer;
 import edu.core.java.auction.domain.interfaces.DomainObject;
+import edu.core.java.auction.domain.interfaces.Person;
 
 /**
  * Created by Maxim on 19.02.2017.

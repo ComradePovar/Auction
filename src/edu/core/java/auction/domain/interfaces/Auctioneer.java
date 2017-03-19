@@ -11,6 +11,5 @@ public interface Auctioneer {
     String getName();
     void setName(String name);
     HashSet<Lot> getLots();
-    void createLot(Product product);
-    void removeLot(Long lotId);
+    Long getId();
 }
