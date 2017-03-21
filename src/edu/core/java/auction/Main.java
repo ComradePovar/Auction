@@ -1,8 +1,6 @@
 package edu.core.java.auction;
 
-import edu.core.java.auction.domain.concrete.Bid;
-import edu.core.java.auction.domain.concrete.Lot;
-import edu.core.java.auction.domain.concrete.SimpleSeller;
+import edu.core.java.auction.domain.concrete.*;
 import edu.core.java.auction.domain.interfaces.*;
 
 import java.io.BufferedReader;
@@ -12,7 +10,7 @@ import java.util.HashSet;
 import java.util.Timer;
 import java.util.TimerTask;
 // TODO:
-// Добавить удаление, обновление, вывод сущностей
+// Добавить обновление
 // Упростить модель
 // ПЕРЕПРОВЕРИТЬ ВСЕ
 // Добавить JSON и лог
@@ -37,7 +35,8 @@ public class Main {
             System.out.println("5. Exit.");
             System.out.println("----------------------------------------------------");
 
-            switch(Integer.parseInt(reader.readLine())) {
+            int choice = Integer.parseInt(reader.readLine());
+            switch(choice) {
                 case 1 :
                     System.out.println("1. Create auctioneer.");
                     System.out.println("2. Create product.");
@@ -47,8 +46,8 @@ public class Main {
                     System.out.println("6. Create bid.");
                     System.out.println("7. Main menu.");
                     System.out.println("----------------------------------------------------");
-                    String buffer;
-                    switch(Integer.parseInt(reader.readLine())){
+                    choice = Integer.parseInt(reader.readLine());
+                    switch(choice){
                         case 1 :
                             System.out.print("Name: ");
                             String aucName = reader.readLine();
@@ -129,7 +128,50 @@ public class Main {
                     System.out.println("4. Delete seller.");
                     System.out.println("5. Delete lot.");
                     System.out.println("6. Delete bid.");
+                    System.out.println("7. Main menu.");
                     System.out.println("----------------------------------------------------");
+                    choice = Integer.parseInt(reader.readLine());
+                    Long id;
+                    switch(choice){
+                        case 1 :
+                            System.out.print("Enter auctioneer ID: ");
+                            id = Long.parseLong(reader.readLine());
+                            service.deleteSimpleAuctioneerById(id);
+                            System.out.println("Auctioneer with id = " + id + " was deleted.");
+                            break;
+                        case 2 :
+                            System.out.print("Enter product ID: ");
+                            id = Long.parseLong(reader.readLine());
+                            service.deleteSimpleProductById(id);
+                            System.out.println("Product with id = " + id + " was deleted.");
+                            break;
+                        case 3 :
+                            System.out.print("Enter buyer ID: ");
+                            id = Long.parseLong(reader.readLine());
+                            service.deleteSimpleBuyerById(id);
+                            System.out.println("Buyer with id = " + id + " was deleted.");
+                            break;
+                        case 4 :
+                            System.out.print("Enter seller ID: ");
+                            id = Long.parseLong(reader.readLine());
+                            service.deleteSimpleSellerById(id);
+                            System.out.println("Seller with id = " + id + " was deleted.");
+                            break;
+                        case 5 :
+                            System.out.print("Enter lot ID: ");
+                            id = Long.parseLong(reader.readLine());
+                            service.deleteLotById(id);
+                            System.out.println("Lot with id = " + id + " was deleted.");
+                            break;
+                        case 6 :
+                            System.out.print("Enter bid ID: ");
+                            id = Long.parseLong(reader.readLine());
+                            service.deleteBidById(id);
+                            System.out.println("Bid with id = " + id + " was deleted.");
+                            break;
+                        case 7 :
+                            break;
+                    }
                     break;
                 case 3 :
                     System.out.println("1. Update auctioneer.");
@@ -138,7 +180,12 @@ public class Main {
                     System.out.println("4. Update seller.");
                     System.out.println("5. Update lot.");
                     System.out.println("6. Update bid.");
+                    System.out.println("7. Main menu.");
                     System.out.println("----------------------------------------------------");
+                    choice = Integer.parseInt(reader.readLine());
+//                    switch(choice){
+//                        // TODO
+//                    }
                     break;
                 case 4 :
                     System.out.println("1. Show auctioneer.");
@@ -147,7 +194,78 @@ public class Main {
                     System.out.println("4. Show seller.");
                     System.out.println("5. Show lot.");
                     System.out.println("6. Show bid.");
+                    System.out.println("7. Main menu.");
                     System.out.println("----------------------------------------------------");
+                    choice = Integer.parseInt(reader.readLine());
+                    switch(choice){
+                        case 1 :
+                            System.out.print("Enter auctioneer ID: ");
+                            id = Long.parseLong(reader.readLine());
+                            SimpleAuctioneer auctioneer = service.getSimpleAuctioneerById(id);
+                            System.out.println(auctioneer.getId());
+                            System.out.println(auctioneer.getName());
+                            System.out.print("Lot IDs: ");
+                            for (Lot lot : auctioneer.getLots()){
+                                System.out.print(lot.getId() + " ");
+                            }
+                            break;
+                        case 2 :
+                            System.out.print("Enter product ID: ");
+                            id = Long.parseLong(reader.readLine());
+                            SimpleProduct simpleProduct = service.getSimpleProductById(id);
+                            System.out.println(simpleProduct.getId());
+                            System.out.println(simpleProduct.getTitle());
+                            System.out.println(simpleProduct.getDescription());
+                            System.out.println("Owner ID: " + simpleProduct.getOwner().getId());
+                            System.out.println("Seller price: " + simpleProduct.getSellerPrice());
+                            break;
+                        case 3 :
+                            System.out.print("Enter buyer ID: ");
+                            id = Long.parseLong(reader.readLine());
+                            SimpleBuyer simpleBuyer = service.getSimpleBuyerById(id);
+                            System.out.println(simpleBuyer.getId());
+                            System.out.println(simpleBuyer.getName());
+                            System.out.println(simpleBuyer.getAccountBalance());
+                            System.out.println("Bid IDs: ");
+                            for (Bid bid : simpleBuyer.getBids()){
+                                System.out.print(bid.getId() + " ");
+                            }
+                            break;
+                        case 4 :
+                            System.out.print("Enter seller ID: ");
+                            id = Long.parseLong(reader.readLine());
+                            SimpleSeller simpleSeller = service.getSimpleSellerById(id);
+                            System.out.println(simpleSeller.getId());
+                            System.out.println(simpleSeller.getName());
+                            System.out.println(simpleSeller.getAccountBalance());
+                            System.out.println(simpleSeller.getComissionPercentage());
+                            System.out.println("Product IDs: ");
+                            for (Product product : simpleSeller.getProducts()){
+                                System.out.print(product.getId() + " ");
+                            }
+                            break;
+                        case 5 :
+                            System.out.print("Enter lot ID: ");
+                            id = Long.parseLong(reader.readLine());
+                            Lot lot = service.getLotById(id);
+                            System.out.println(lot.getId());
+                            System.out.println("Start date: " + lot.getStartDate());
+                            System.out.println("End date: " + lot.getEndDate());
+                            System.out.println("Current bid ID: " + lot.getCurrentBid().getId());
+                            System.out.println("Auctioneer ID: " + lot.getAuctioneer().getId());
+                            System.out.println("Product ID: " + lot.getProduct().getId());
+                            break;
+                        case 6 :
+                            System.out.print("Enter bid ID: ");
+                            id = Long.parseLong(reader.readLine());
+                            Bid bid = service.getBidById(id);
+                            System.out.println(bid.getId());
+                            System.out.println("Buyer ID: " + bid.getBuyer().getId());
+                            System.out.println(bid.getBidAmount());
+                            break;
+                        case 7 :
+                            break;
+                    }
                     break;
                 case 5 :
                     return;

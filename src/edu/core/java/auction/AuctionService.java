@@ -97,7 +97,13 @@ public class AuctionService {
     public void setDateFormat(DateFormat newDateFormat){
         dateFormat = newDateFormat;
     }
+
     // Operations with SimpleAuctioneerRepository
+
+    public edu.core.java.auction.domain.concrete.SimpleAuctioneer getSimpleAuctioneerById(Long id){
+        return simpleAuctioneerTranslator.convertToDomainObject(simpleAuctioneerRepository.find(id));
+    }
+
     public edu.core.java.auction.domain.concrete.SimpleAuctioneer createSimpleAuctioneer(){
         SimpleAuctioneer simpleAuctioneerValue = new SimpleAuctioneer();
         edu.core.java.auction.domain.concrete.SimpleAuctioneer simpleAuctioneerDomain =
@@ -135,6 +141,11 @@ public class AuctionService {
     }
 
     // Operations with SimpleBuyerRepository
+
+    public edu.core.java.auction.domain.concrete.SimpleBuyer getSimpleBuyerById(Long id){
+        return simpleBuyerTranslator.convertToDomainObject(simpleBuyerRepository.find(id));
+    }
+
     public edu.core.java.auction.domain.concrete.SimpleBuyer createSimpleBuyer(){
         SimpleBuyer simpleBuyerValue = new SimpleBuyer();
         edu.core.java.auction.domain.concrete.SimpleBuyer simpleBuyerDomain =
@@ -181,6 +192,11 @@ public class AuctionService {
     }
 
     // Operations with SimpleSellerRepository
+
+    public edu.core.java.auction.domain.concrete.SimpleSeller getSimpleSellerById(Long id){
+        return simpleSellerTranslator.convertToDomainObject(simpleSellerRepository.find(id));
+    }
+
     public edu.core.java.auction.domain.concrete.SimpleSeller createSimpleSeller(){
         SimpleSeller simpleSellerValue = new SimpleSeller();
         edu.core.java.auction.domain.concrete.SimpleSeller simpleSellerDomain =
@@ -227,6 +243,11 @@ public class AuctionService {
     }
 
     // Operations with SimpleProductRepository
+
+    public edu.core.java.auction.domain.concrete.SimpleProduct getSimpleProductById(Long id){
+        return simpleProductTranslator.convertToDomainObject(simpleProductRepository.find(id));
+    }
+
     public edu.core.java.auction.domain.concrete.SimpleProduct createSimpleProduct(){
         SimpleProduct simpleProductValue = new SimpleProduct();
         edu.core.java.auction.domain.concrete.SimpleProduct simpleProductDomain =
@@ -278,7 +299,12 @@ public class AuctionService {
     }
 
     // Operations with BidRepository
-    public edu.core.java.auction.domain.concrete.Bid createBid(Long buyerId, Long lotId, double bidAmount){
+
+    public Bid getBidById(Long id){
+        return bidTranslator.convertToDomainObject(bidRepository.find(id));
+    }
+
+    public edu.core.java.auction.domain.concrete.Bid createBid(Long buyerId, Long lotId, double bidAmount) {
         edu.core.java.auction.vo.Bid bidValue = new edu.core.java.auction.vo.Bid(buyerId, bidAmount);
         Buyer buyer = simpleBuyerTranslator.convertToDomainObject(simpleBuyerRepository.find(buyerId));
         edu.core.java.auction.domain.concrete.Lot lot = lotTranslator.convertToDomainObject(lotRepository.find(lotId));
@@ -305,11 +331,6 @@ public class AuctionService {
         }
 
         return bidDomain;
-    }
-
-    public Bid findBidById(Long id){
-        edu.core.java.auction.vo.Bid bid = bidRepository.find(id);
-        return bidTranslator.convertToDomainObject(bid);
     }
 
     public void deleteBidById(Long id) { bidRepository.delete(id);
@@ -346,9 +367,8 @@ public class AuctionService {
         return lotDomain;
     }
 
-    public edu.core.java.auction.domain.concrete.Lot findLotById(Long id){
-        Lot lotValue = lotRepository.find(id);
-        return lotTranslator.convertToDomainObject(lotValue);
+    public edu.core.java.auction.domain.concrete.Lot getLotById(Long id){
+        return lotTranslator.convertToDomainObject(lotRepository.find(id));
     }
 
     public void deleteLotById(Long id){
