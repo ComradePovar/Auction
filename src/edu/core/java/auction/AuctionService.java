@@ -1,20 +1,15 @@
 package edu.core.java.auction;
 
-import edu.core.java.auction.domain.concrete.*;
-import edu.core.java.auction.domain.concrete.Bid;
-import edu.core.java.auction.domain.interfaces.*;
-import edu.core.java.auction.loader.concrete.SimpleAuctioneerLoader;
-import edu.core.java.auction.loader.interfaces.Loader;
-import edu.core.java.auction.repository.concrete.*;
-import edu.core.java.auction.repository.interfaces.Repository;
-import edu.core.java.auction.translator.concrete.*;
-import edu.core.java.auction.translator.interfaces.Translator;
+import edu.core.java.auction.domain.Bid;
+import edu.core.java.auction.domain.Auctioneer;
+import edu.core.java.auction.domain.Product;
+import edu.core.java.auction.domain.Seller;
+import edu.core.java.auction.domain.interfaces.Buyer;
+import edu.core.java.auction.loader.AuctioneerLoader;
+import edu.core.java.auction.loader.Loader;
+import edu.core.java.auction.repository.*;
+import edu.core.java.auction.translator.*;
 import edu.core.java.auction.vo.*;
-import edu.core.java.auction.vo.Lot;
-import edu.core.java.auction.vo.SimpleAuctioneer;
-import edu.core.java.auction.vo.SimpleBuyer;
-import edu.core.java.auction.vo.SimpleProduct;
-import edu.core.java.auction.vo.SimpleSeller;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -28,9 +23,9 @@ public class AuctionService {
     private DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
     private class LotHandler extends TimerTask{
-        private edu.core.java.auction.domain.concrete.Lot lot;
+        private edu.core.java.auction.domain.Lot lot;
 
-        public LotHandler(edu.core.java.auction.domain.concrete.Lot lot){
+        public LotHandler(edu.core.java.auction.domain.Lot lot){
             this.lot = lot;
         }
 
@@ -38,7 +33,7 @@ public class AuctionService {
         public void run() {
             Buyer winner = lot.getCurrentBid().getBuyer();
             Seller seller = lot.getProduct().getOwner();
-            System.out.println("Auction has ended. Lot name:" + lot.getProduct().getTitle());
+            System.out.println("Auction has ended. LotValueObject name:" + lot.getProduct().getTitle());
             System.out.println("The winner is " + simpleBuyerRepository.find(winner.getId()).name);
 
             simpleProductRepository.delete(lot.getProduct().getId());
@@ -47,7 +42,7 @@ public class AuctionService {
 
             double sellerWinnings = seller.getAccountBalance() + lot.getCurrentBid().getBidAmount() * (1 - seller.getComissionPercentage());
             seller.setAccountBalance(sellerWinnings);
-            SimpleSeller sellerValue = simpleSellerRepository.find(seller.getId());
+            SellerValueObject sellerValue = simpleSellerRepository.find(seller.getId());
             sellerValue.accountBalance = sellerWinnings;
             simpleSellerRepository.update(sellerValue.getId(), sellerValue);
             lot.getAuctioneer().getLots().remove(lot);
@@ -57,30 +52,30 @@ public class AuctionService {
 
     // Repositories
 
-    private Repository<edu.core.java.auction.vo.Bid> bidRepository = new BidRepository();
-    private Repository<Lot> lotRepository = new LotRepository();
-    private Repository<SimpleAuctioneer> simpleAuctioneerRepository = new SimpleAuctioneerRepository();
-    private Repository<SimpleBuyer> simpleBuyerRepository = new SimpleBuyerRepository();
-    private Repository<SimpleProduct> simpleProductRepository = new SimpleProductRepository();
-    private Repository<SimpleSeller> simpleSellerRepository = new SimpleSellerRepository();
+    private Repository<BidValueObject> bidRepository = new BidRepository();
+    private Repository<LotValueObject> lotRepository = new LotRepository();
+    private Repository<AuctioneerValueObject> simpleAuctioneerRepository = new AuctioneerRepository();
+    private Repository<BuyerValueObject> simpleBuyerRepository = new BuyerRepository();
+    private Repository<ProductValueObject> simpleProductRepository = new ProductRepository();
+    private Repository<SellerValueObject> simpleSellerRepository = new SellerRepository();
 
     // Translators
 
-    private Translator<edu.core.java.auction.vo.Bid, Bid> bidTranslator = new BidTranslator();
-    private Translator<Lot, edu.core.java.auction.domain.concrete.Lot> lotTranslator = new LotTranslator();
-    private Translator<SimpleAuctioneer, edu.core.java.auction.domain.concrete.SimpleAuctioneer>
-            simpleAuctioneerTranslator = new SimpleAuctioneerTranslator();
-    private Translator<SimpleBuyer, edu.core.java.auction.domain.concrete.SimpleBuyer>
-            simpleBuyerTranslator = new SimpleBuyerTranslator();
-    private Translator<SimpleProduct, edu.core.java.auction.domain.concrete.SimpleProduct>
-            simpleProductTranslator = new SimpleProductTranslator();
-    private Translator<SimpleSeller, edu.core.java.auction.domain.concrete.SimpleSeller>
-            simpleSellerTranslator = new SimpleSellerTranslator();
+    private Translator<BidValueObject, Bid> bidTranslator = new BidTranslator();
+    private Translator<LotValueObject, edu.core.java.auction.domain.Lot> lotTranslator = new LotTranslator();
+    private Translator<AuctioneerValueObject, Auctioneer>
+            simpleAuctioneerTranslator = new AuctioneerTranslator();
+    private Translator<BuyerValueObject, edu.core.java.auction.domain.Buyer>
+            simpleBuyerTranslator = new BuyerTranslator();
+    private Translator<ProductValueObject, Product>
+            simpleProductTranslator = new ProductTranslator();
+    private Translator<SellerValueObject, Seller>
+            simpleSellerTranslator = new SellerTranslator();
 
     // Loaders
 
-    private Loader<edu.core.java.auction.domain.concrete.SimpleAuctioneer> simpleAuctioneerLoader =
-            new SimpleAuctioneerLoader(simpleAuctioneerRepository, lotRepository, lotTranslator);
+    private Loader<Auctioneer> simpleAuctioneerLoader =
+            new AuctioneerLoader(simpleAuctioneerRepository, lotRepository, lotTranslator);
 
     private AuctionService(){
     }
@@ -98,204 +93,204 @@ public class AuctionService {
         dateFormat = newDateFormat;
     }
 
-    // Operations with SimpleAuctioneerRepository
+    // Operations with AuctioneerRepository
 
-    public edu.core.java.auction.domain.concrete.SimpleAuctioneer getSimpleAuctioneerById(Long id){
+    public Auctioneer getSimpleAuctioneerById(Long id){
         return simpleAuctioneerTranslator.convertToDomainObject(simpleAuctioneerRepository.find(id));
     }
 
-    public edu.core.java.auction.domain.concrete.SimpleAuctioneer createSimpleAuctioneer(){
-        SimpleAuctioneer simpleAuctioneerValue = new SimpleAuctioneer();
-        edu.core.java.auction.domain.concrete.SimpleAuctioneer simpleAuctioneerDomain =
-                new edu.core.java.auction.domain.concrete.SimpleAuctioneer(simpleAuctioneerValue.getId());
-        simpleAuctioneerRepository.add(simpleAuctioneerValue);
+    public Auctioneer createSimpleAuctioneer(){
+        AuctioneerValueObject auctioneerValueObjectValue = new AuctioneerValueObject();
+        Auctioneer auctioneerDomain =
+                new Auctioneer(auctioneerValueObjectValue.getId());
+        simpleAuctioneerRepository.add(auctioneerValueObjectValue);
 
-        return simpleAuctioneerDomain;
+        return auctioneerDomain;
     }
 
-    public edu.core.java.auction.domain.concrete.SimpleAuctioneer createSimpleAuctioneer(String name){
-        SimpleAuctioneer simpleAuctioneerValue = new SimpleAuctioneer(name);
-        edu.core.java.auction.domain.concrete.SimpleAuctioneer simpleAuctioneerDomain =
-                new edu.core.java.auction.domain.concrete.SimpleAuctioneer(simpleAuctioneerValue.getId(), name);
-        simpleAuctioneerRepository.add(simpleAuctioneerValue);
+    public Auctioneer createSimpleAuctioneer(String name){
+        AuctioneerValueObject auctioneerValueObjectValue = new AuctioneerValueObject(name);
+        Auctioneer auctioneerDomain =
+                new Auctioneer(auctioneerValueObjectValue.getId(), name);
+        simpleAuctioneerRepository.add(auctioneerValueObjectValue);
 
-        return simpleAuctioneerDomain;
+        return auctioneerDomain;
     }
 
-    public void updateSimpleAuctioneer(edu.core.java.auction.domain.concrete.SimpleAuctioneer simpleAuctioneer){
-        SimpleAuctioneer simpleAuctioneerValue = simpleAuctioneerTranslator.convertToValueObject(simpleAuctioneer);
-        simpleAuctioneerRepository.update(simpleAuctioneerValue.getId(), simpleAuctioneerValue);
+    public void updateSimpleAuctioneer(Auctioneer auctioneer){
+        AuctioneerValueObject auctioneerValueObjectValue = simpleAuctioneerTranslator.convertToValueObject(auctioneer);
+        simpleAuctioneerRepository.update(auctioneerValueObjectValue.getId(), auctioneerValueObjectValue);
     }
 
-    public edu.core.java.auction.domain.concrete.SimpleAuctioneer findSimpleAuctioneerById(Long id){
-        SimpleAuctioneer simpleAuctioneerValue = simpleAuctioneerRepository.find(id);
-        return simpleAuctioneerTranslator.convertToDomainObject(simpleAuctioneerValue);
+    public Auctioneer findSimpleAuctioneerById(Long id){
+        AuctioneerValueObject auctioneerValueObjectValue = simpleAuctioneerRepository.find(id);
+        return simpleAuctioneerTranslator.convertToDomainObject(auctioneerValueObjectValue);
     }
 
     public void deleteSimpleAuctioneerById(Long id){
         simpleAuctioneerRepository.delete(id);
     }
 
-    public HashSet<edu.core.java.auction.domain.concrete.SimpleAuctioneer> getAllSimpleAuctioneers(){
+    public HashSet<Auctioneer> getAllSimpleAuctioneers(){
         return simpleAuctioneerLoader.getAllEntities();
     }
 
-    // Operations with SimpleBuyerRepository
+    // Operations with BuyerRepository
 
-    public edu.core.java.auction.domain.concrete.SimpleBuyer getSimpleBuyerById(Long id){
+    public edu.core.java.auction.domain.Buyer getSimpleBuyerById(Long id){
         return simpleBuyerTranslator.convertToDomainObject(simpleBuyerRepository.find(id));
     }
 
-    public edu.core.java.auction.domain.concrete.SimpleBuyer createSimpleBuyer(){
-        SimpleBuyer simpleBuyerValue = new SimpleBuyer();
-        edu.core.java.auction.domain.concrete.SimpleBuyer simpleBuyerDomain =
-                new edu.core.java.auction.domain.concrete.SimpleBuyer(simpleBuyerValue.getId());
-        simpleBuyerRepository.add(simpleBuyerValue);
+    public edu.core.java.auction.domain.Buyer createSimpleBuyer(){
+        BuyerValueObject buyerValueObjectValue = new BuyerValueObject();
+        edu.core.java.auction.domain.Buyer buyerDomain =
+                new edu.core.java.auction.domain.Buyer(buyerValueObjectValue.getId());
+        simpleBuyerRepository.add(buyerValueObjectValue);
 
-        return simpleBuyerDomain;
+        return buyerDomain;
     }
 
-    public edu.core.java.auction.domain.concrete.SimpleBuyer createSimpleBuyer(
+    public edu.core.java.auction.domain.Buyer createSimpleBuyer(
             String name, double accountBalance){
-        SimpleBuyer simpleBuyerValue = new SimpleBuyer(name, accountBalance);
-        edu.core.java.auction.domain.concrete.SimpleBuyer simpleBuyerDomain =
-                new edu.core.java.auction.domain.concrete.SimpleBuyer(simpleBuyerValue.getId(), name, accountBalance);
-        simpleBuyerRepository.add(simpleBuyerValue);
+        BuyerValueObject buyerValueObjectValue = new BuyerValueObject(name, accountBalance);
+        edu.core.java.auction.domain.Buyer buyerDomain =
+                new edu.core.java.auction.domain.Buyer(buyerValueObjectValue.getId(), name, accountBalance);
+        simpleBuyerRepository.add(buyerValueObjectValue);
 
-        return simpleBuyerDomain;
+        return buyerDomain;
     }
 
-    public void updateSimpleBuyer(edu.core.java.auction.domain.concrete.SimpleBuyer simpleBuyer){
-        SimpleBuyer simpleBuyerValue = simpleBuyerTranslator.convertToValueObject(simpleBuyer);
-        simpleBuyerRepository.update(simpleBuyerValue.getId(), simpleBuyerValue);
+    public void updateSimpleBuyer(edu.core.java.auction.domain.Buyer buyer){
+        BuyerValueObject buyerValueObjectValue = simpleBuyerTranslator.convertToValueObject(buyer);
+        simpleBuyerRepository.update(buyerValueObjectValue.getId(), buyerValueObjectValue);
     }
 
-    public edu.core.java.auction.domain.concrete.SimpleBuyer findSimpleBuyerById(Long id){
-        SimpleBuyer simpleBuyerValue = simpleBuyerRepository.find(id);
-        return simpleBuyerTranslator.convertToDomainObject(simpleBuyerValue);
+    public edu.core.java.auction.domain.Buyer findSimpleBuyerById(Long id){
+        BuyerValueObject buyerValueObjectValue = simpleBuyerRepository.find(id);
+        return simpleBuyerTranslator.convertToDomainObject(buyerValueObjectValue);
     }
 
     public void deleteSimpleBuyerById(Long id){
         simpleBuyerRepository.delete(id);
     }
 
-    public HashSet<edu.core.java.auction.domain.concrete.SimpleBuyer> getAllSimpleBuyers(){
-        Collection<SimpleBuyer> simpleBuyers = simpleBuyerRepository.getAll();
-        HashSet<edu.core.java.auction.domain.concrete.SimpleBuyer> simpleBuyersDomain =
-                new HashSet<edu.core.java.auction.domain.concrete.SimpleBuyer>();
+    public HashSet<edu.core.java.auction.domain.Buyer> getAllSimpleBuyers(){
+        Collection<BuyerValueObject> buyerValueObjects = simpleBuyerRepository.getAll();
+        HashSet<edu.core.java.auction.domain.Buyer> buyersDomain =
+                new HashSet<edu.core.java.auction.domain.Buyer>();
 
-        for (SimpleBuyer simpleBuyerValue : simpleBuyers){
-            simpleBuyersDomain.add(simpleBuyerTranslator.convertToDomainObject(simpleBuyerValue));
+        for (BuyerValueObject buyerValueObjectValue : buyerValueObjects){
+            buyersDomain.add(simpleBuyerTranslator.convertToDomainObject(buyerValueObjectValue));
         }
 
-        return simpleBuyersDomain;
+        return buyersDomain;
     }
 
-    // Operations with SimpleSellerRepository
+    // Operations with SellerRepository
 
-    public edu.core.java.auction.domain.concrete.SimpleSeller getSimpleSellerById(Long id){
+    public Seller getSimpleSellerById(Long id){
         return simpleSellerTranslator.convertToDomainObject(simpleSellerRepository.find(id));
     }
 
-    public edu.core.java.auction.domain.concrete.SimpleSeller createSimpleSeller(){
-        SimpleSeller simpleSellerValue = new SimpleSeller();
-        edu.core.java.auction.domain.concrete.SimpleSeller simpleSellerDomain =
-                new edu.core.java.auction.domain.concrete.SimpleSeller(simpleSellerValue.getId());
-        simpleSellerRepository.add(simpleSellerValue);
+    public Seller createSimpleSeller(){
+        SellerValueObject sellerValueObjectValue = new SellerValueObject();
+        Seller sellerDomain =
+                new Seller(sellerValueObjectValue.getId());
+        simpleSellerRepository.add(sellerValueObjectValue);
 
-        return simpleSellerDomain;
+        return sellerDomain;
     }
 
-    public edu.core.java.auction.domain.concrete.SimpleSeller createSimpleSeller(
+    public Seller createSimpleSeller(
             String name, double accountBalance, double comissionPercentage){
-        SimpleSeller simpleSellerValue = new SimpleSeller(name, accountBalance, comissionPercentage);
-        edu.core.java.auction.domain.concrete.SimpleSeller simpleSellerDomain =
-                new edu.core.java.auction.domain.concrete.SimpleSeller(simpleSellerValue.getId(), name, accountBalance, comissionPercentage);
-        simpleSellerRepository.add(simpleSellerValue);
+        SellerValueObject sellerValueObjectValue = new SellerValueObject(name, accountBalance, comissionPercentage);
+        Seller sellerDomain =
+                new Seller(sellerValueObjectValue.getId(), name, accountBalance, comissionPercentage);
+        simpleSellerRepository.add(sellerValueObjectValue);
 
-        return simpleSellerDomain;
+        return sellerDomain;
     }
 
-    public void updateSimpleSeller(edu.core.java.auction.domain.concrete.SimpleSeller simpleSeller){
-        SimpleSeller simpleSellerValue = simpleSellerTranslator.convertToValueObject(simpleSeller);
-        simpleSellerRepository.update(simpleSellerValue.getId(), simpleSellerValue);
+    public void updateSimpleSeller(Seller seller){
+        SellerValueObject sellerValueObjectValue = simpleSellerTranslator.convertToValueObject(seller);
+        simpleSellerRepository.update(sellerValueObjectValue.getId(), sellerValueObjectValue);
     }
 
-    public edu.core.java.auction.domain.concrete.SimpleSeller findSimpleSellerById(Long id){
-        SimpleSeller simpleSellerValue = simpleSellerRepository.find(id);
-        return simpleSellerTranslator.convertToDomainObject(simpleSellerValue);
+    public Seller findSimpleSellerById(Long id){
+        SellerValueObject sellerValueObjectValue = simpleSellerRepository.find(id);
+        return simpleSellerTranslator.convertToDomainObject(sellerValueObjectValue);
     }
 
     public void deleteSimpleSellerById(Long id){
         simpleSellerRepository.delete(id);
     }
 
-    public HashSet<edu.core.java.auction.domain.concrete.SimpleSeller> getAllSimpleSellers(){
-        Collection<SimpleSeller> simpleSellers = simpleSellerRepository.getAll();
-        HashSet<edu.core.java.auction.domain.concrete.SimpleSeller> simpleSellersDomain =
-                new HashSet<edu.core.java.auction.domain.concrete.SimpleSeller>();
+    public HashSet<Seller> getAllSimpleSellers(){
+        Collection<SellerValueObject> sellerValueObjects = simpleSellerRepository.getAll();
+        HashSet<Seller> sellersDomain =
+                new HashSet<Seller>();
 
-        for (SimpleSeller simpleSellerValue : simpleSellers){
-            simpleSellersDomain.add(simpleSellerTranslator.convertToDomainObject(simpleSellerValue));
+        for (SellerValueObject sellerValueObjectValue : sellerValueObjects){
+            sellersDomain.add(simpleSellerTranslator.convertToDomainObject(sellerValueObjectValue));
         }
 
-        return simpleSellersDomain;
+        return sellersDomain;
     }
 
-    // Operations with SimpleProductRepository
+    // Operations with ProductRepository
 
-    public edu.core.java.auction.domain.concrete.SimpleProduct getSimpleProductById(Long id){
+    public Product getSimpleProductById(Long id){
         return simpleProductTranslator.convertToDomainObject(simpleProductRepository.find(id));
     }
 
-    public edu.core.java.auction.domain.concrete.SimpleProduct createSimpleProduct(){
-        SimpleProduct simpleProductValue = new SimpleProduct();
-        edu.core.java.auction.domain.concrete.SimpleProduct simpleProductDomain =
-                new edu.core.java.auction.domain.concrete.SimpleProduct(simpleProductValue.getId());
-        simpleProductRepository.add(simpleProductValue);
+    public Product createSimpleProduct(){
+        ProductValueObject productValueObjectValue = new ProductValueObject();
+        Product productDomain =
+                new Product(productValueObjectValue.getId());
+        simpleProductRepository.add(productValueObjectValue);
 
-        return simpleProductDomain;
+        return productDomain;
     }
 
-    public edu.core.java.auction.domain.concrete.SimpleProduct createSimpleProduct(
+    public Product createSimpleProduct(
             String title, String description, Long ownerId, double sellerPrice){
-        SimpleProduct simpleProductValue = new SimpleProduct(title, description, ownerId, sellerPrice);
+        ProductValueObject productValueObjectValue = new ProductValueObject(title, description, ownerId, sellerPrice);
 
-        edu.core.java.auction.domain.concrete.SimpleSeller owner =
+        Seller owner =
                 simpleSellerTranslator.convertToDomainObject(simpleSellerRepository.find(ownerId));
-        edu.core.java.auction.domain.concrete.SimpleProduct simpleProductDomain =
-                new edu.core.java.auction.domain.concrete.SimpleProduct(
-                        simpleProductValue.getId(), title, description, owner, sellerPrice);
-        owner.getProducts().add(simpleProductDomain);
-        simpleProductRepository.add(simpleProductValue);
+        Product productDomain =
+                new Product(
+                        productValueObjectValue.getId(), title, description, owner, sellerPrice);
+        owner.getProducts().add(productDomain);
+        simpleProductRepository.add(productValueObjectValue);
 
-        return simpleProductDomain;
+        return productDomain;
     }
 
-    public void updateSimpleProduct(edu.core.java.auction.domain.concrete.SimpleProduct simpleProduct){
-        SimpleProduct simpleProductValue = simpleProductTranslator.convertToValueObject(simpleProduct);
-        simpleProductRepository.update(simpleProduct.getId(), simpleProductValue);
+    public void updateSimpleProduct(Product product){
+        ProductValueObject productValueObjectValue = simpleProductTranslator.convertToValueObject(product);
+        simpleProductRepository.update(product.getId(), productValueObjectValue);
     }
 
-    public edu.core.java.auction.domain.concrete.SimpleProduct findSimpleProductById(Long id){
-        SimpleProduct simpleProductValue = simpleProductRepository.find(id);
-        return simpleProductTranslator.convertToDomainObject(simpleProductValue);
+    public Product findSimpleProductById(Long id){
+        ProductValueObject productValueObjectValue = simpleProductRepository.find(id);
+        return simpleProductTranslator.convertToDomainObject(productValueObjectValue);
     }
 
     public void deleteSimpleProductById(Long id){
         simpleProductRepository.delete(id);
     }
 
-    public HashSet<edu.core.java.auction.domain.concrete.SimpleProduct> getAllSimpleProducts(){
-        Collection<SimpleProduct> simpleProducts = simpleProductRepository.getAll();
-        HashSet<edu.core.java.auction.domain.concrete.SimpleProduct> simpleProductsDomain =
-                new HashSet<edu.core.java.auction.domain.concrete.SimpleProduct>();
+    public HashSet<Product> getAllSimpleProducts(){
+        Collection<ProductValueObject> productValueObjects = simpleProductRepository.getAll();
+        HashSet<Product> productsDomain =
+                new HashSet<Product>();
 
-        for (SimpleProduct simpleProductValue : simpleProducts){
-            simpleProductsDomain.add(simpleProductTranslator.convertToDomainObject(simpleProductValue));
+        for (ProductValueObject productValueObjectValue : productValueObjects){
+            productsDomain.add(simpleProductTranslator.convertToDomainObject(productValueObjectValue));
         }
 
-        return simpleProductsDomain;
+        return productsDomain;
     }
 
     // Operations with BidRepository
@@ -304,10 +299,10 @@ public class AuctionService {
         return bidTranslator.convertToDomainObject(bidRepository.find(id));
     }
 
-    public edu.core.java.auction.domain.concrete.Bid createBid(Long buyerId, Long lotId, double bidAmount) {
-        edu.core.java.auction.vo.Bid bidValue = new edu.core.java.auction.vo.Bid(buyerId, bidAmount);
+    public Bid createBid(Long buyerId, Long lotId, double bidAmount) {
+        BidValueObject bidValueObjectValue = new BidValueObject(buyerId, bidAmount);
         Buyer buyer = simpleBuyerTranslator.convertToDomainObject(simpleBuyerRepository.find(buyerId));
-        edu.core.java.auction.domain.concrete.Lot lot = lotTranslator.convertToDomainObject(lotRepository.find(lotId));
+        edu.core.java.auction.domain.Lot lot = lotTranslator.convertToDomainObject(lotRepository.find(lotId));
         Bid bidDomain = new Bid(buyer, bidAmount);
 
         if (buyer.getAccountBalance() >= bidAmount) {
@@ -315,7 +310,7 @@ public class AuctionService {
             if (oldBid != null) {
                 Buyer oldBuyerDomain = lot.getCurrentBid().getBuyer();
                 oldBuyerDomain.setAccountBalance(oldBuyerDomain.getAccountBalance() + lot.getCurrentBid().getBidAmount());
-                SimpleBuyer oldBuyer = simpleBuyerRepository.find(oldBid.getBuyer().getId());
+                BuyerValueObject oldBuyer = simpleBuyerRepository.find(oldBid.getBuyer().getId());
                 oldBuyer.accountBalance += oldBid.getBidAmount();
                 simpleBuyerRepository.update(oldBuyer.getId(), oldBuyer);
                 bidRepository.delete(oldBid.getId());
@@ -323,11 +318,11 @@ public class AuctionService {
 
             lot.setCurrentBid(bidDomain);
             buyer.setAccountBalance(buyer.getAccountBalance() - bidAmount);
-            SimpleBuyer newBuyer = simpleBuyerRepository.find(buyerId);
+            BuyerValueObject newBuyer = simpleBuyerRepository.find(buyerId);
             newBuyer.accountBalance -= bidAmount;
             simpleBuyerRepository.update(newBuyer.getId(), newBuyer);
 
-            bidRepository.add(bidValue);
+            bidRepository.add(bidValueObjectValue);
         }
 
         return bidDomain;
@@ -337,37 +332,37 @@ public class AuctionService {
     }
 
     public HashSet<Bid> getAllBids(){
-        Collection<edu.core.java.auction.vo.Bid> bids = bidRepository.getAll();
+        Collection<BidValueObject> bidValueObjects = bidRepository.getAll();
         HashSet<Bid> bidsDomain = new HashSet<Bid>();
 
-        for (edu.core.java.auction.vo.Bid bidValue : bids){
-            bidsDomain.add(bidTranslator.convertToDomainObject(bidValue));
+        for (BidValueObject bidValueObjectValue : bidValueObjects){
+            bidsDomain.add(bidTranslator.convertToDomainObject(bidValueObjectValue));
         }
 
         return bidsDomain;
     }
 
     // Operations with LotRepository
-    public edu.core.java.auction.domain.concrete.Lot createLot(
+    public edu.core.java.auction.domain.Lot createLot(
             double startPrice, Date endDate, Long productId, Long auctioneerId){
         Date startDate = new Date();
-        Lot lotValue = new Lot(startPrice, startDate, endDate, productId, auctioneerId);
+        LotValueObject lotValueObjectValue = new LotValueObject(startPrice, startDate, endDate, productId, auctioneerId);
 
         Product product = simpleProductTranslator.convertToDomainObject(simpleProductRepository.find(productId));
         Auctioneer auctioneer = simpleAuctioneerTranslator.convertToDomainObject(simpleAuctioneerRepository.find(auctioneerId));
-        edu.core.java.auction.domain.concrete.Lot lotDomain =
-                new edu.core.java.auction.domain.concrete.Lot(startPrice, startDate, endDate, product, auctioneer);
+        edu.core.java.auction.domain.Lot lotDomain =
+                new edu.core.java.auction.domain.Lot(startPrice, startDate, endDate, product, auctioneer);
         Timer timer = new Timer();
         timer.schedule(new LotHandler(lotDomain), endDate.getTime() - startDate.getTime());
         System.out.println("Auction has started. Name: " + lotDomain.getProduct().getTitle());
 
         auctioneer.getLots().add(lotDomain);
-        lotRepository.add(lotValue);
+        lotRepository.add(lotValueObjectValue);
 
         return lotDomain;
     }
 
-    public edu.core.java.auction.domain.concrete.Lot getLotById(Long id){
+    public edu.core.java.auction.domain.Lot getLotById(Long id){
         return lotTranslator.convertToDomainObject(lotRepository.find(id));
     }
 
@@ -375,13 +370,13 @@ public class AuctionService {
         lotRepository.delete(id);
     }
 
-    public HashSet<edu.core.java.auction.domain.concrete.Lot> getAllLots(){
-        Collection<Lot> lots = lotRepository.getAll();
-        HashSet<edu.core.java.auction.domain.concrete.Lot> lotsDomain =
-                new HashSet<edu.core.java.auction.domain.concrete.Lot>();
+    public HashSet<edu.core.java.auction.domain.Lot> getAllLots(){
+        Collection<LotValueObject> lotValueObjects = lotRepository.getAll();
+        HashSet<edu.core.java.auction.domain.Lot> lotsDomain =
+                new HashSet<edu.core.java.auction.domain.Lot>();
 
-        for (Lot lotValue : lots){
-            lotsDomain.add(lotTranslator.convertToDomainObject(lotValue));
+        for (LotValueObject lotValueObjectValue : lotValueObjects){
+            lotsDomain.add(lotTranslator.convertToDomainObject(lotValueObjectValue));
         }
 
         return lotsDomain;
