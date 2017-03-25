@@ -16,11 +16,13 @@ import java.util.Date;
  */
 public class LotTranslator implements Translator<LotValueObject, Lot> {
     private BidTranslator bidTranslator;
+
     private ProductTranslator productTranslator;
     private BidRepository bidRepository;
     private ProductRepository productRepository;
     private AuctioneerLoader auctioneerLoader;
 
+    public LotTranslator(){}
     public LotTranslator(BidTranslator bidTranslator, BidRepository bidRepository,
                          ProductRepository productRepository, ProductTranslator productTranslator,
                          AuctioneerLoader auctioneerLoader){
@@ -49,5 +51,25 @@ public class LotTranslator implements Translator<LotValueObject, Lot> {
         lotValueObject.endDate = value.getEndDate();
         lotValueObject.startPrice = value.getStartPrice();
         return lotValueObject;
+    }
+
+    public void setBidTranslator(BidTranslator bidTranslator) {
+        this.bidTranslator = bidTranslator;
+    }
+
+    public void setProductTranslator(ProductTranslator productTranslator) {
+        this.productTranslator = productTranslator;
+    }
+
+    public void setBidRepository(BidRepository bidRepository) {
+        this.bidRepository = bidRepository;
+    }
+
+    public void setProductRepository(ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
+
+    public void setAuctioneerLoader(AuctioneerLoader auctioneerLoader) {
+        this.auctioneerLoader = auctioneerLoader;
     }
 }

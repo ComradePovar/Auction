@@ -12,6 +12,12 @@ public class ProductTranslator
     private SellerTranslator sellerTranslator;
     private SellerRepository sellerRepository;
 
+    public ProductTranslator() {}
+    public ProductTranslator(SellerTranslator sellerTranslator, SellerRepository sellerRepository){
+        this.sellerRepository = sellerRepository;
+        this.sellerTranslator = sellerTranslator;
+    }
+
     @Override
     public Product convertToDomainObject(ProductValueObject value) {
         Product product = new Product(value.id, value.title, value.description,
@@ -26,8 +32,19 @@ public class ProductTranslator
         productValueObject.id = value.getId();
         productValueObject.title = value.getTitle();
         productValueObject.description = value.getDescription();
-        productValueObject.ownerId = value.getOwner().getId();
+        if (value.getOwner() != null)
+            productValueObject.ownerId = value.getOwner().getId();
+        else
+            productValueObject.ownerId = (long)0;
         productValueObject.sellerPrice = value.getSellerPrice();
         return productValueObject;
+    }
+
+    public void setSellerTranslator(SellerTranslator sellerTranslator) {
+        this.sellerTranslator = sellerTranslator;
+    }
+
+    public void setSellerRepository(SellerRepository sellerRepository) {
+        this.sellerRepository = sellerRepository;
     }
 }

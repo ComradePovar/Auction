@@ -27,4 +27,6 @@ public abstract class Repository<V extends ValueObject> {
     public Collection<V> getAll(){
         return repository.values();
     }
+    public abstract Long getMaxId();
+    public abstract void incMaxId();
 }

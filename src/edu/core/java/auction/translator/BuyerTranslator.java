@@ -13,6 +13,7 @@ public class BuyerTranslator
     private BidRepository bidRepository;
     private BidTranslator bidTranslator;
 
+    public BuyerTranslator(){}
     public BuyerTranslator(BidRepository bidRepository, BidTranslator bidTranslator){
         this.bidRepository = bidRepository;
         this.bidTranslator = bidTranslator;
@@ -37,5 +38,13 @@ public class BuyerTranslator
         buyerValueObject.name = value.getName();
         buyerValueObject.accountBalance = value.getAccountBalance();
         return buyerValueObject;
+    }
+
+    public void setBidTranslator(BidTranslator bidTranslator){
+        this.bidTranslator = bidTranslator;
+    }
+
+    public void setBidRepository(BidRepository bidRepository){
+        this.bidRepository = bidRepository;
     }
 }

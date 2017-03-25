@@ -12,6 +12,7 @@ public class BidTranslator implements Translator<BidValueObject, Bid> {
     private BuyerTranslator buyerTranslator;
     private BuyerRepository buyerRepository;
 
+    public BidTranslator(){}
     public BidTranslator(BuyerTranslator buyerTranslator, BuyerRepository buyerRepository){
         this.buyerTranslator = buyerTranslator;
         this.buyerRepository = buyerRepository;
@@ -30,5 +31,13 @@ public class BidTranslator implements Translator<BidValueObject, Bid> {
         bid.amount = value.getBidAmount();
         bid.buyerId = value.getBuyer().getId();
         return bid;
+    }
+
+    public void setBuyerTranslator(BuyerTranslator buyerTranslator){
+        this.buyerTranslator = buyerTranslator;
+    }
+
+    public void setBuyerRepository(BuyerRepository buyerRepository){
+        this.buyerRepository = buyerRepository;
     }
 }

@@ -13,6 +13,8 @@ public class SellerTranslator
     private ProductTranslator productTranslator;
     private ProductRepository productRepository;
 
+    public SellerTranslator(){ }
+
     public SellerTranslator(ProductTranslator productTranslator, ProductRepository productRepository){
         this.productRepository = productRepository;
         this.productTranslator = productTranslator;
@@ -23,7 +25,7 @@ public class SellerTranslator
         Seller seller = new Seller(value.id, value.name, value.accountBalance, value.comissionPercentage);
 
         for (ProductValueObject productValueObject : productRepository.getAll()){
-            if (productValueObject.ownerId == value.id){
+            if (productValueObject.ownerId.equals(value.id)){
                 seller.getProducts().add(productTranslator.convertToDomainObject(productValueObject));
             }
         }
@@ -39,5 +41,13 @@ public class SellerTranslator
         sellerValueObject.accountBalance = value.getAccountBalance();
         sellerValueObject.comissionPercentage = value.getComissionPercentage();
         return sellerValueObject;
+    }
+
+    public void setProductTranslator(ProductTranslator productTranslator) {
+        this.productTranslator = productTranslator;
+    }
+
+    public void setProductRepository(ProductRepository productRepository) {
+        this.productRepository = productRepository;
     }
 }
