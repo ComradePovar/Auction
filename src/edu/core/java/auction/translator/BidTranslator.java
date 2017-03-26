@@ -20,6 +20,8 @@ public class BidTranslator implements Translator<BidValueObject, Bid> {
 
     @Override
     public Bid convertToDomainObject(BidValueObject value) {
+        if (value == null)
+            return null;
         Buyer buyer = buyerTranslator.convertToDomainObject(buyerRepository.find(value.buyerId));
         return new Bid(value.id, buyer, value.amount);
     }

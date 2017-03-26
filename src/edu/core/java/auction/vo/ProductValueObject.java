@@ -7,5 +7,4 @@ public class ProductValueObject extends ValueObject {
     public String title;
     public String description;
     public Long ownerId;
-    public double sellerPrice;
 }

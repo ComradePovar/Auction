@@ -4,25 +4,16 @@ import edu.core.java.auction.domain.*;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Timer;
 import java.util.TimerTask;
 // TODO:
-// Добавить обновление
-// Исправить майн
-// ПЕРЕПРОВЕРИТЬ ВСЕ
+//Работает с 1м покупателем, продавцом, ауком, лотом, ставкой.
+//Не работает система розыгрыша
 // Добавить JSON и лог
 public class Main {
-    private static HashSet<Seller> sellers = new HashSet<>();
-    private static HashSet<Auctioneer> auctioneers = new HashSet<>();
-    private static HashSet<Buyer> buyers = new HashSet<>();
-    private static HashSet<Lot> lots = new HashSet<>();
-    private static HashSet<Bid> bids = new HashSet<>();
-    private static HashSet<Product> products = new HashSet<>();
-
     public static void main(String[] args) throws Exception{
-        AuctionService service = AuctionService.getInstance();
-
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         while (true){
             System.out.println("----------------------------------------------------");
@@ -68,122 +59,8 @@ public class Main {
                     System.out.println("6. Update bid.");
                     System.out.println("7. Main menu.");
                     System.out.println("----------------------------------------------------");
-                    Long id;
                     choice = Integer.parseInt(reader.readLine());
-                    switch(choice){
-                        case 1 :
-                            System.out.print("Enter auctioneer ID: ");
-                            id = Long.parseLong(reader.readLine());
-                            Auctioneer auctioneer = service.getAuctioneerById(id);
-                            System.out.println(auctioneer.getId());
-                            System.out.println(auctioneer.getName());
-                            System.out.print("LotValueObject IDs: ");
-
-                            for (Lot lot : auctioneer.getLots()){
-                                System.out.print(lot.getId() + " ");
-                            }
-
-                            do {
-                                System.out.println("1. Edit name.");
-                                System.out.println("2. Delete lot.");
-                                System.out.println("3. Main menu.");
-                                choice = Integer.parseInt(reader.readLine());
-                                switch (choice) {
-                                    case 1:
-                                        System.out.print("New name: ");
-                                        auctioneer.setName(reader.readLine());
-                                        service.updateAuctioneer(auctioneer);
-                                        System.out.println("Auctioneer with ID = " + id + " was updated.");
-                                        break;
-                                    case 2:
-                                        System.out.print("Lot id: ");
-                                        Long lotId = Long.parseLong(reader.readLine());
-                                        service.deleteLotById(lotId);
-                                        System.out.println("Lot with ID = " + id + " was deleted.");
-                                        break;
-                                }
-                            } while(choice != 3);
-                        case 2 :
-                            System.out.print("Enter product ID: ");
-                            id = Long.parseLong(reader.readLine());
-                            Product simpleProduct = service.getProductById(id);
-                            System.out.println(simpleProduct.getId());
-                            System.out.println(simpleProduct.getTitle());
-                            System.out.println(simpleProduct.getDescription());
-                            System.out.println("Owner ID: " + simpleProduct.getOwner().getId());
-                            System.out.println("Seller price: " + simpleProduct.getSellerPrice());
-
-                            do {
-                                System.out.println("1. Edit title.");
-                                System.out.println("2. Edit description.");
-                                System.out.println("3. Set owner.");
-                                System.out.println("4. Set seller price.");
-                                System.out.println("5. Main menu.");
-                                choice = Integer.parseInt(reader.readLine());
-                                switch (choice) {
-                                    case 1:
-                                        System.out.print("New name: ");
-                                        auctioneer.setName(reader.readLine());
-                                        service.updateAuctioneer(auctioneer);
-                                        System.out.println("Auctioneer with ID = " + id + " was updated.");
-                                        break;
-                                    case 2:
-                                        System.out.print("Lot id: ");
-                                        Long lotId = Long.parseLong(reader.readLine());
-                                        service.deleteLotById(lotId);
-                                        System.out.println("Lot with ID = " + id + " was deleted.");
-                                        break;
-                                    case 3:
-                                    case 4:
-                                }
-                            } while(choice != 5);
-                            break;
-                        case 3 :
-                            System.out.print("Enter buyer ID: ");
-                            id = Long.parseLong(reader.readLine());
-                            Buyer buyer = service.getBuyerById(id);
-                            System.out.println(buyer.getId());
-                            System.out.println(buyer.getName());
-                            System.out.println(buyer.getAccountBalance());
-                            System.out.println("BidValueObject IDs: ");
-                            for (Bid bid : buyer.getBids()){
-                                System.out.print(bid.getId() + " ");
-                            }
-                            break;
-                        case 4 :
-                            System.out.print("Enter seller ID: ");
-                            id = Long.parseLong(reader.readLine());
-                            Seller seller = service.getSellerById(id);
-                            System.out.println(seller.getId());
-                            System.out.println(seller.getName());
-                            System.out.println(seller.getAccountBalance());
-                            System.out.println(seller.getComissionPercentage());
-                            System.out.println("Product IDs: ");
-                            for (Product product : seller.getProducts()){
-                                System.out.print(product.getId() + " ");
-                            }
-                            break;
-                        case 5 :
-                            System.out.print("Enter lot ID: ");
-                            id = Long.parseLong(reader.readLine());
-                            Lot lot = service.getLotById(id);
-                            System.out.println(lot.getId());
-                            System.out.println("Start date: " + lot.getStartDate());
-                            System.out.println("End date: " + lot.getEndDate());
-                            System.out.println("Current bid ID: " + lot.getCurrentBid().getId());
-                            System.out.println("Auctioneer ID: " + lot.getAuctioneer().getId());
-                            System.out.println("Product ID: " + lot.getProduct().getId());
-                            break;
-                        case 6 :
-                            System.out.print("Enter bid ID: ");
-                            id = Long.parseLong(reader.readLine());
-                            Bid bid = service.getBidById(id);
-                            System.out.println(bid.getId());
-                            System.out.println("Buyer ID: " + bid.getBuyer().getId());
-                            System.out.println(bid.getBidAmount());
-                            break;
-                        case 7 :
-                            break;
+                    updateEntity(choice);
                     break;
                 case 4 :
                     System.out.println("1. Show auctioneer.");
@@ -201,9 +78,6 @@ public class Main {
                     return;
             }
         }
-
-        Timer timer = new Timer();
-       // timer.schedule(new Checker(auctioneer, seller, buyer1, buyer2, product, lot), 5000);
     }
 
     public static void showEntity(int choice) throws Exception{
@@ -230,7 +104,6 @@ public class Main {
                 System.out.println(simpleProduct.getTitle());
                 System.out.println(simpleProduct.getDescription());
                 System.out.println("Owner ID: " + simpleProduct.getOwner().getId());
-                System.out.println("Seller price: " + simpleProduct.getSellerPrice());
                 break;
             case 3 :
                 System.out.print("Enter buyer ID: ");
@@ -265,7 +138,6 @@ public class Main {
                 System.out.println("Start date: " + lot.getStartDate());
                 System.out.println("End date: " + lot.getEndDate());
                 System.out.println("Current bid ID: " + lot.getCurrentBid().getId());
-                System.out.println("Auctioneer ID: " + lot.getAuctioneer().getId());
                 System.out.println("Product ID: " + lot.getProduct().getId());
                 break;
             case 6 :
@@ -327,6 +199,284 @@ public class Main {
         }
     }
 
+    public static void updateEntity(int choice) throws Exception{
+        Long id;
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        AuctionService service = AuctionService.getInstance();
+        switch(choice) {
+            case 1:
+                System.out.print("Enter auctioneer ID: ");
+                id = Long.parseLong(reader.readLine());
+                Auctioneer auctioneer = service.getAuctioneerById(id);
+                System.out.println(auctioneer.getId());
+                System.out.println(auctioneer.getName());
+                System.out.print("LotValueObject IDs: ");
+
+                for (Lot lot : auctioneer.getLots()) {
+                    System.out.print(lot.getId() + " ");
+                }
+
+                do {
+                    System.out.println("1. Edit name.");
+                    System.out.println("2. Delete lot.");
+                    System.out.println("3. Main menu.");
+                    choice = Integer.parseInt(reader.readLine());
+                    switch (choice) {
+                        case 1:
+                            System.out.print("New name: ");
+                            auctioneer.setName(reader.readLine());
+                            service.updateAuctioneer(auctioneer);
+                            System.out.println("Auctioneer with ID = " + id + " was updated.");
+                            break;
+                        case 2:
+                            System.out.print("Lot id: ");
+                            Long lotId = Long.parseLong(reader.readLine());
+                            service.deleteLotById(lotId);
+                            System.out.println("Lot with ID = " + id + " was deleted.");
+                            break;
+                    }
+                } while (choice != 3);
+            case 2:
+                System.out.print("Enter product ID: ");
+                id = Long.parseLong(reader.readLine());
+                Product product = service.getProductById(id);
+                System.out.println(product.getId());
+                System.out.println(product.getTitle());
+                System.out.println(product.getDescription());
+                System.out.println("Owner ID: " + product.getOwner().getId());
+
+                do {
+                    System.out.println("1. Edit title.");
+                    System.out.println("2. Edit description.");
+                    System.out.println("3. Set owner.");
+                    System.out.println("4. Main menu.");
+                    choice = Integer.parseInt(reader.readLine());
+                    switch (choice) {
+                        case 1:
+                            System.out.print("New title: ");
+                            product.setTitle(reader.readLine());
+                            service.updateProduct(product);
+                            System.out.println("Product with ID = " + id + " was updated.");
+                            break;
+                        case 2:
+                            System.out.print("New description: ");
+                            product.setDescription(reader.readLine());
+                            service.updateProduct(product);
+                            System.out.println("Product with ID = " + id + " was updated.");
+                            break;
+                        case 3:
+                            System.out.print("New owner ID: ");
+                            product.getOwner().getProducts().removeIf(ownerProduct -> ownerProduct.getId().equals(product.getId()));
+                            product.setOwner(service.findSellerById(Long.parseLong(reader.readLine())));
+                            service.updateProduct(product);
+                            System.out.println("Product with ID = " + id + " was updated.");
+                            break;
+                    }
+                } while (choice != 4);
+                break;
+            case 3:
+                System.out.print("Enter buyer ID: ");
+                id = Long.parseLong(reader.readLine());
+                Buyer buyer = service.getBuyerById(id);
+                System.out.println(buyer.getId());
+                System.out.println(buyer.getName());
+                System.out.println(buyer.getAccountBalance());
+                System.out.println("BidValueObject IDs: ");
+
+                for (Bid bid : buyer.getBids()) {
+                    System.out.print(bid.getId() + " ");
+                }
+
+                do {
+                    System.out.println("1. Edit name.");
+                    System.out.println("2. Add money.");
+                    System.out.println("3. Withdraw money.");
+                    System.out.println("4. Delete bid.");
+                    System.out.println("5. Main menu.");
+                    choice = Integer.parseInt(reader.readLine());
+                    switch (choice) {
+                        case 1:
+                            System.out.print("New name: ");
+                            buyer.setName(reader.readLine());
+                            service.updateBuyer(buyer);
+                            System.out.println("Buyer with ID = " + id + " was updated.");
+                            break;
+                        case 2:
+                            System.out.print("Amount: ");
+                            buyer.addMoney(Double.parseDouble(reader.readLine()));
+                            service.updateBuyer(buyer);
+                            System.out.println("Buyer with ID = " + id + " was updated.");
+                            break;
+                        case 3:
+                            System.out.print("Amount: ");
+                            buyer.withdrawMoney(Double.parseDouble(reader.readLine()));
+                            service.updateBuyer(buyer);
+                            System.out.println("Buyer with ID = " + id + " was updated.");
+                            break;
+                        case 4:
+                            System.out.print("Bid ID: ");
+                            Long bidId = Long.parseLong(reader.readLine());
+                            service.deleteBidById(bidId);
+                            System.out.println("Bid with ID = " + bidId + " was deleted.");
+                            break;
+                    }
+                } while (choice != 5);
+                break;
+            case 4:
+                System.out.print("Enter seller ID: ");
+                id = Long.parseLong(reader.readLine());
+                Seller seller = service.getSellerById(id);
+                System.out.println(seller.getId());
+                System.out.println(seller.getName());
+                System.out.println(seller.getAccountBalance());
+                System.out.println(seller.getComissionPercentage());
+                System.out.println("Product IDs: ");
+
+                for (Product sellerProduct : seller.getProducts()) {
+                    System.out.print(sellerProduct.getId() + " ");
+                }
+
+                do {
+                    System.out.println("1. Edit name.");
+                    System.out.println("2. Add money.");
+                    System.out.println("3. Withdraw money.");
+                    System.out.println("4. Delete product.");
+                    System.out.println("5. Add product.");
+                    System.out.println("6. Main menu.");
+                    choice = Integer.parseInt(reader.readLine());
+                    switch (choice) {
+                        case 1:
+                            System.out.print("New name: ");
+                            seller.setName(reader.readLine());
+                            service.updateSeller(seller);
+                            System.out.println("Seller with ID = " + id + " was updated.");
+                            break;
+                        case 2:
+                            System.out.print("Amount: ");
+                            seller.addMoney(Double.parseDouble(reader.readLine()));
+                            service.updateSeller(seller);
+                            System.out.println("Seller with ID = " + id + " was updated.");
+                            break;
+                        case 3:
+                            System.out.print("Amount: ");
+                            seller.withdrawMoney(Double.parseDouble(reader.readLine()));
+                            service.updateSeller(seller);
+                            System.out.println("Seller with ID = " + id + " was updated.");
+                            break;
+                        case 4: {
+                            System.out.print("Product ID: ");
+                            Long productId = Long.parseLong(reader.readLine());
+                            Product sellerProduct = service.getProductById(productId);
+                            seller.getProducts().removeIf(ownerProduct -> ownerProduct.getId().equals(productId));
+                            sellerProduct.setOwner(null);
+                            service.updateProduct(sellerProduct);
+                            System.out.println("Seller with ID = " + id + " was deleted.");
+                            break;
+                        }
+                        case 5:
+                            System.out.print("Product ID: ");
+                            Long productId = Long.parseLong(reader.readLine());
+                            Product sellerProduct = service.getProductById(productId);
+                            sellerProduct.getOwner().getProducts().removeIf(ownerProduct -> ownerProduct.getId().equals(productId));
+                            seller.getProducts().add(sellerProduct);
+                            sellerProduct.setOwner(seller);
+                            service.updateProduct(sellerProduct);
+                            System.out.println("Seller with ID = " + id + " was deleted.");
+                            break;
+                    }
+                } while (choice != 6);
+                break;
+            case 5:
+                System.out.print("Enter lot ID: ");
+                id = Long.parseLong(reader.readLine());
+                Lot lot = service.getLotById(id);
+                System.out.println(lot.getId());
+                System.out.println("Start date: " + lot.getStartDate());
+                System.out.println("End date: " + lot.getEndDate());
+                System.out.println("Current bid ID: " + lot.getCurrentBid().getId());
+                System.out.println("Product ID: " + lot.getProduct().getId());
+
+                do {
+                    System.out.println("1. Edit start date.");
+                    System.out.println("2. Edit end date.");
+                    System.out.println("3. Delete current bid id.");
+                    System.out.println("4. Replace product id.");
+                    System.out.println("5. Main menu.");
+                    choice = Integer.parseInt(reader.readLine());
+                    switch (choice) {
+                        case 1:
+                            System.out.print("Enter new start date: ");
+                            String newStartDate = reader.readLine();
+                            service.cancelLotById(id);
+                            lot.setStartDate(service.getDateFormat().parse(newStartDate));
+                            service.startLotById(id);
+                            service.updateLot(lot);
+                            System.out.println("Lot with ID = " + id + " was updated.");
+                            break;
+                        case 2:
+                            System.out.print("Enter new end date: ");
+                            String newEndDate = reader.readLine();
+                            service.cancelLotById(id);
+                            lot.setEndDate(service.getDateFormat().parse(newEndDate));
+                            service.startLotById(id);
+                            service.updateLot(lot);
+                            System.out.println("Lot with ID = " + id + " was updated.");
+                            break;
+                        case 3:
+                            lot.setCurrentBid(null);
+                            service.updateLot(lot);
+                            System.out.println("Lot with ID = " + id + " was updated.");
+                            break;
+                        case 4:
+                            System.out.print("Enter new product id: ");
+                            Long newProdId = Long.parseLong(reader.readLine());
+                            lot.setProduct(service.findProductById(newProdId));
+                            service.updateLot(lot);
+                            System.out.println("Lot with ID = " + id + " was updated.");
+                            break;
+                    }
+                } while(choice != 5);
+                break;
+            case 6:
+                System.out.print("Enter bid ID: ");
+                id = Long.parseLong(reader.readLine());
+                Bid bid = service.getBidById(id);
+                System.out.println(bid.getId());
+                System.out.println("Buyer ID: " + bid.getBuyer().getId());
+                System.out.println(bid.getBidAmount());
+
+                do{
+                    System.out.println("1. Replace buyer ID: ");
+                    System.out.println("2. Edit bid amount: ");
+                    System.out.println("3. Main menu.");
+                    choice = Integer.parseInt(reader.readLine());
+                    switch(choice){
+                        case 1:
+                            System.out.print("Enter new buyer ID: ");
+                            Long newBuyerId = Long.parseLong(reader.readLine());
+                            Buyer newBuyer = service.findBuyerById(newBuyerId);
+                            Buyer oldBuyer = bid.getBuyer();
+                            bid.setBuyer(newBuyer);
+                            newBuyer.getBids().add(bid);
+                            oldBuyer.getBids().removeIf(oldBuyerBid -> oldBuyerBid.getId().equals(bid.getId()));
+                            service.updateBid(bid);
+                            System.out.println("Bid with ID = " + id + " was updated.");
+                            break;
+                        case 2:
+                            System.out.print("Enter new bid amount: ");
+                            double newBidAmount = Double.parseDouble(reader.readLine());
+                            bid.setBidAmount(newBidAmount);
+                            service.updateBid(bid);
+                            System.out.println("Bid with ID = " + id + " was updated.");
+                            break;
+                    }
+                } while (choice != 3);
+                break;
+            case 7:
+                break;
+        }
+    }
+
     public static void createEntity(int choice) throws Exception{
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         AuctionService service = AuctionService.getInstance();
@@ -335,7 +485,6 @@ public class Main {
                 System.out.print("Name: ");
                 String aucName = reader.readLine();
                 Auctioneer auctioneer = service.createAuctioneer(aucName);
-                auctioneers.add(auctioneer);
                 System.out.println("Auctioneer with id = " + auctioneer.getId() + " was created.");
                 break;
             case 2 :
@@ -345,11 +494,7 @@ public class Main {
                 String prodDescr = reader.readLine();
                 System.out.print("Owner ID: ");
                 String prodOwnerId = reader.readLine();
-                System.out.print("Seller price: ");
-                String prodSellerPrice = reader.readLine();
-                Product product = service.createProduct(
-                        prodTitle, prodDescr, Long.parseLong(prodOwnerId), Double.parseDouble(prodSellerPrice));
-                products.add(product);
+                Product product = service.createProduct(prodTitle, prodDescr, Long.parseLong(prodOwnerId));
                 System.out.println("Product with id = " + product.getId() + " was created.");
                 break;
             case 3 :
@@ -358,7 +503,6 @@ public class Main {
                 System.out.println("Account balance: ");
                 String buyerAccountBalance = reader.readLine();
                 Buyer buyer = service.createBuyer(buyerName, Double.parseDouble(buyerAccountBalance));
-                buyers.add(buyer);
                 System.out.println("Buyer with id = " + buyer.getId() + " was created.");
                 break;
             case 4 :
@@ -370,12 +514,13 @@ public class Main {
                 String comissionPercentage = reader.readLine();
                 Seller seller = service.createSeller(
                         sellerName, Double.parseDouble(sellerAccountBalance), Double.parseDouble(comissionPercentage));
-                sellers.add(seller);
                 System.out.println("Seller with id = " + seller.getId() + " was created.");
                 break;
             case 5 :
                 System.out.println("Start price: ");
                 String lotStartPrice = reader.readLine();
+                System.out.println("Start date: ");
+                String lotStartDate = reader.readLine();
                 System.out.println("End date: ");
                 String lotEndDate = reader.readLine();
                 System.out.println("Product ID: ");
@@ -383,22 +528,21 @@ public class Main {
                 System.out.println("Auctioneer ID: ");
                 String lotAuctioneerId = reader.readLine();
                 Lot lot = service.createLot(
-                        Double.parseDouble(lotStartPrice), service.getDateFormat().parse(lotEndDate),
-                        Long.parseLong(lotProductId), Long.parseLong(lotAuctioneerId));
-                lots.add(lot);
+                        Double.parseDouble(lotStartPrice), service.getDateFormat().parse(lotStartDate),
+                        service.getDateFormat().parse(lotEndDate), Long.parseLong(lotProductId),
+                        Long.parseLong(lotAuctioneerId));
                 System.out.println("LotValueObject with id = " + lot.getId() + " was created.");
                 break;
             case 6 :
                 System.out.println("Buyer ID: ");
                 String bidBuyerId = reader.readLine();
-                System.out.println("BidValueObject amount: ");
+                System.out.println("Bid amount: ");
                 String bidAmount = reader.readLine();
-                System.out.println("LotValueObject ID: ");
+                System.out.println("Lot ID: ");
                 String bidLotId = reader.readLine();
                 Bid bid = service.createBid(
                         Long.parseLong(bidBuyerId), Long.parseLong(bidLotId), Double.parseDouble(bidAmount));
-                bids.add(bid);
-                System.out.println("BidValueObject with id = " + bid.getId() + " was created.");
+                System.out.println("Bid with id = " + bid.getId() + " was created.");
                 break;
             case 7 :
                 break;

@@ -1,5 +1,6 @@
 package edu.core.java.auction.translator;
 
+import edu.core.java.auction.domain.Bid;
 import edu.core.java.auction.domain.Buyer;
 import edu.core.java.auction.repository.BidRepository;
 import edu.core.java.auction.vo.BidValueObject;
@@ -24,7 +25,7 @@ public class BuyerTranslator
 
         for (BidValueObject bidValueObject : bidRepository.getAll()){
             if (bidValueObject.buyerId == value.id){
-                buyer.getBids().add(bidTranslator.convertToDomainObject(bidValueObject));
+                buyer.getBids().add(new Bid(bidValueObject.id, buyer, bidValueObject.amount));
             }
         }
 

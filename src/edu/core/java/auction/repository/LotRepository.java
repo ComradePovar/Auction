@@ -6,8 +6,7 @@ import edu.core.java.auction.vo.LotValueObject;
  * Created by Max on 06.03.2017.
  */
 public class LotRepository extends Repository<LotValueObject> {
-    protected static Long maxId;
-
+    protected static Long maxId = (long)0;
 
     @Override
     public Long getMaxId(){

@@ -6,7 +6,7 @@ import edu.core.java.auction.vo.BidValueObject;
  * Created by Max on 06.03.2017.
  */
 public class BidRepository extends Repository<BidValueObject> {
-    protected static Long maxId;
+    protected static Long maxId = (long)0;
 
 
     @Override

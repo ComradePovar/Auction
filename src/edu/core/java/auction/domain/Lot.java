@@ -9,17 +9,16 @@ import java.util.Date;
  */
 public class Lot extends DomainObject {
     private Bid currentBid;
-    private Auctioneer auctioneer;
     private double startPrice;
     private Date startDate;
     private Date endDate;
     private Product product;
 
-    public Lot(double startPrice, Date startDate, Date endDate, Product product, Auctioneer auctioneer, Bid bid){
+    public Lot(Long id, double startPrice, Date startDate, Date endDate, Product product, Bid bid){
+        this.id = id;
         this.startDate = startDate;
         this.endDate = endDate;
         this.startPrice = startPrice;
-        this.auctioneer = auctioneer;
         this.product = product;
         this.currentBid = bid;
     }
@@ -48,6 +47,14 @@ public class Lot extends DomainObject {
         return endDate;
     }
 
+    public void setStartDate(Date date){
+        this.startDate = date;
+    }
+
+    public void setEndDate(Date date){
+        this.endDate = date;
+    }
+
     public Product getProduct() {
         return product;
     }
@@ -56,7 +63,7 @@ public class Lot extends DomainObject {
         return startDate;
     }
 
-    public Auctioneer getAuctioneer(){
-        return auctioneer;
+    public void setProduct(Product product){
+        this.product = product;
     }
 }

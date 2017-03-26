@@ -21,8 +21,7 @@ public class ProductTranslator
     @Override
     public Product convertToDomainObject(ProductValueObject value) {
         Product product = new Product(value.id, value.title, value.description,
-                sellerTranslator.convertToDomainObject(sellerRepository.find(value.ownerId)),
-                value.sellerPrice);
+                sellerTranslator.convertToDomainObject(sellerRepository.find(value.ownerId)));
         return product;
     }
 
@@ -36,7 +35,6 @@ public class ProductTranslator
             productValueObject.ownerId = value.getOwner().getId();
         else
             productValueObject.ownerId = (long)0;
-        productValueObject.sellerPrice = value.getSellerPrice();
         return productValueObject;
     }
 

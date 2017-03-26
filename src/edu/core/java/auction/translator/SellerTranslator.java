@@ -1,5 +1,6 @@
 package edu.core.java.auction.translator;
 
+import edu.core.java.auction.domain.Product;
 import edu.core.java.auction.domain.Seller;
 import edu.core.java.auction.repository.ProductRepository;
 import edu.core.java.auction.vo.ProductValueObject;
@@ -26,7 +27,9 @@ public class SellerTranslator
 
         for (ProductValueObject productValueObject : productRepository.getAll()){
             if (productValueObject.ownerId.equals(value.id)){
-                seller.getProducts().add(productTranslator.convertToDomainObject(productValueObject));
+                Product product = new Product(productValueObject.id, productValueObject.title, productValueObject.description,
+                        seller);
+                seller.getProducts().add(product);
             }
         }
 

@@ -1,8 +1,8 @@
 package edu.core.java.auction;
 
 import edu.core.java.auction.domain.*;
-import edu.core.java.auction.loader.AuctioneerLoader;
-import edu.core.java.auction.loader.Loader;
+import edu.core.java.auction.loader.LotLoader;
+import edu.core.java.auction.translator.AuctioneerTranslator;
 import edu.core.java.auction.repository.*;
 import edu.core.java.auction.translator.*;
 import edu.core.java.auction.vo.*;
@@ -17,11 +17,12 @@ import java.util.*;
 public class AuctionService {
     private static AuctionService instance = new AuctionService();
     private DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+    private HashMap<Long, Timer> timers = new HashMap<>();
 
     private class LotHandler extends TimerTask{
-        private edu.core.java.auction.domain.Lot lot;
+        private Lot lot;
 
-        public LotHandler(edu.core.java.auction.domain.Lot lot){
+        public LotHandler(Lot lot){
             this.lot = lot;
         }
 
@@ -35,31 +36,47 @@ public class AuctionService {
             seller.addMoney(lot.getCurrentBid().getBidAmount() * (1 - seller.getComissionPercentage()));
             sellerRepository.update(seller.getId(), sellerTranslator.convertToValueObject(seller));
             deleteProductById(lot.getProduct().getId());
+            timers.remove(lot.getId());
         }
     }
 
     // Repositories
 
-    private Repository<BidValueObject> bidRepository = new BidRepository();
-    private Repository<LotValueObject> lotRepository = new LotRepository();
-    private Repository<AuctioneerValueObject> auctioneerRepository = new AuctioneerRepository();
-    private Repository<BuyerValueObject> buyerRepository = new BuyerRepository();
-    private Repository<ProductValueObject> productRepository = new ProductRepository();
-    private Repository<SellerValueObject> sellerRepository = new SellerRepository();
+    private BidRepository bidRepository = new BidRepository();
+    private LotRepository lotRepository = new LotRepository();
+    private AuctioneerRepository auctioneerRepository = new AuctioneerRepository();
+    private BuyerRepository buyerRepository = new BuyerRepository();
+    private ProductRepository productRepository = new ProductRepository();
+    private SellerRepository sellerRepository = new SellerRepository();
 
     // Translators
 
-    private Translator<BidValueObject, Bid> bidTranslator = new BidTranslator();
-    private Translator<LotValueObject, Lot> lotTranslator = new LotTranslator();
-    private Translator<BuyerValueObject, Buyer> buyerTranslator = new BuyerTranslator();
-    private Translator<ProductValueObject, Product> productTranslator = new ProductTranslator();
-    private Translator<SellerValueObject, Seller> sellerTranslator = new SellerTranslator();
+    private BidTranslator bidTranslator = new BidTranslator();
+    private BuyerTranslator buyerTranslator = new BuyerTranslator();
+    private ProductTranslator productTranslator = new ProductTranslator();
+    private SellerTranslator sellerTranslator = new SellerTranslator();
+    private AuctioneerTranslator auctioneerTranslator = new AuctioneerTranslator();
 
     // Loaders
 
-    private Loader<Auctioneer> auctioneerLoader = new AuctioneerLoader(auctioneerRepository, lotRepository, lotTranslator);
+
+    private LotLoader lotLoader = new LotLoader(bidTranslator, bidRepository, productRepository, productTranslator, lotRepository);
 
     private AuctionService(){
+        bidTranslator.setBuyerRepository(buyerRepository);
+        bidTranslator.setBuyerTranslator(buyerTranslator);
+
+        sellerTranslator.setProductRepository(productRepository);
+        sellerTranslator.setProductTranslator(productTranslator);
+
+        productTranslator.setSellerRepository(sellerRepository);
+        productTranslator.setSellerTranslator(sellerTranslator);
+
+        auctioneerTranslator.setLotRepository(lotRepository);
+        auctioneerTranslator.setLotLoader(lotLoader);
+
+        buyerTranslator.setBidTranslator(bidTranslator);
+        buyerTranslator.setBidRepository(bidRepository);
     }
 
     public static AuctionService getInstance(){
@@ -78,7 +95,7 @@ public class AuctionService {
     // Operations with AuctioneerRepository
 
     public Auctioneer getAuctioneerById(Long id){
-        return auctioneerLoader.getEntity(id);
+        return auctioneerTranslator.convertToDomainObject(auctioneerRepository.find(id));
     }
 
     public Auctioneer createAuctioneer(){
@@ -108,10 +125,6 @@ public class AuctionService {
         auctioneerRepository.update(auctioneerValueObjectValue.id, auctioneerValueObjectValue);
     }
 
-    public Auctioneer findAuctioneerById(Long id){
-        return auctioneerLoader.getEntity(id);
-    }
-
     public void deleteAuctioneerById(Long id){
         ArrayList<Long> lotIDs = new ArrayList<>();
         for (LotValueObject lotValueObject : lotRepository.getAll()) {
@@ -128,7 +141,13 @@ public class AuctionService {
     }
 
     public HashSet<Auctioneer> getAllAuctioneers(){
-        return auctioneerLoader.getAllEntities();
+        HashSet<Auctioneer> auctioneers = new HashSet<>();
+
+        for(AuctioneerValueObject auctioneerValueObject : auctioneerRepository.getAll()){
+            auctioneers.add(auctioneerTranslator.convertToDomainObject(auctioneerValueObject));
+        }
+
+        return auctioneers;
     }
 
     // Operations with BuyerRepository
@@ -148,7 +167,7 @@ public class AuctionService {
 
     public Buyer createBuyer(String name, double accountBalance){
         BuyerValueObject buyerValueObjectValue = new BuyerValueObject();
-        buyerValueObjectValue.id = buyerRepository.getMaxId();
+        buyerValueObjectValue.id = buyerRepository.getMaxId() + 1;
         buyerRepository.incMaxId();
         buyerValueObjectValue.name = name;
         buyerValueObjectValue.accountBalance = accountBalance;
@@ -272,18 +291,17 @@ public class AuctionService {
         return new Product(productValueObjectValue.id);
     }
 
-    public Product createProduct(String title, String description, Long ownerId, double sellerPrice){
+    public Product createProduct(String title, String description, Long ownerId){
         ProductValueObject productValueObjectValue = new ProductValueObject();
         productValueObjectValue.id = productRepository.getMaxId() + 1;
         productRepository.incMaxId();
         productValueObjectValue.title = title;
         productValueObjectValue.description = description;
         productValueObjectValue.ownerId = ownerId;
-        productValueObjectValue.sellerPrice = sellerPrice;
         productRepository.add(productValueObjectValue);
 
         Seller owner = sellerTranslator.convertToDomainObject(sellerRepository.find(ownerId));
-        Product product = new Product(productValueObjectValue.id, title, description, owner, sellerPrice);
+        Product product = new Product(productValueObjectValue.id, title, description, owner);
         owner.getProducts().add(product);
         productRepository.add(productValueObjectValue);
         return product;
@@ -339,7 +357,7 @@ public class AuctionService {
         bidValueObjectValue.amount = bidAmount;
 
         Buyer buyer = buyerTranslator.convertToDomainObject(buyerRepository.find(buyerId));
-        Lot lot = lotTranslator.convertToDomainObject(lotRepository.find(lotId));
+        Lot lot = lotLoader.getEntity(lotId);
         Bid bid = new Bid(bidValueObjectValue.id, buyer, bidAmount);
 
         if (buyer.getAccountBalance() >= bidAmount) {
@@ -352,6 +370,7 @@ public class AuctionService {
             buyer.getBids().add(bid);
             buyer.withdrawMoney(bidAmount);
             buyerRepository.update(buyer.getId(), buyerTranslator.convertToValueObject(buyer));
+            updateLot(lot);
             bidRepository.add(bidValueObjectValue);
         }
 
@@ -367,6 +386,11 @@ public class AuctionService {
         bidRepository.delete(id);
     }
 
+    public void updateBid(Bid bid){
+        BidValueObject bidValueObjectValue = bidTranslator.convertToValueObject(bid);
+        bidRepository.update(bid.getId(), bidValueObjectValue);
+    }
+
     public HashSet<Bid> getAllBids(){
         Collection<BidValueObject> bidValueObjects = bidRepository.getAll();
         HashSet<Bid> bidsDomain = new HashSet<Bid>();
@@ -379,8 +403,7 @@ public class AuctionService {
     }
 
     // Operations with LotRepository
-    public Lot createLot(double startPrice, Date endDate, Long productId, Long auctioneerId){
-        Date startDate = new Date();
+    public Lot createLot(double startPrice, Date startDate, Date endDate, Long productId, Long auctioneerId){
         LotValueObject lotValueObjectValue = new LotValueObject();
         lotValueObjectValue.id = lotRepository.getMaxId() + 1;
         lotRepository.incMaxId();
@@ -392,10 +415,11 @@ public class AuctionService {
         lotRepository.add(lotValueObjectValue);
 
         Product product = productTranslator.convertToDomainObject(productRepository.find(productId));
-        Auctioneer auctioneer = auctioneerLoader.getEntity(auctioneerId);
-        Lot lotDomain = new Lot(startPrice, startDate, endDate, product, auctioneer, null);
+        Auctioneer auctioneer = auctioneerTranslator.convertToDomainObject(auctioneerRepository.find(auctioneerId));
+        Lot lotDomain = new Lot(lotValueObjectValue.id, startPrice, startDate, endDate, product, null);
         Timer timer = new Timer();
         timer.schedule(new LotHandler(lotDomain), (new Date()).getTime() + endDate.getTime() - startDate.getTime());
+        timers.put(lotDomain.getId(), timer);
         System.out.println("Auction has started. Name: " + lotDomain.getProduct().getTitle());
 
         auctioneer.getLots().add(lotDomain);
@@ -403,26 +427,42 @@ public class AuctionService {
     }
 
     public Lot getLotById(Long id){
-        return lotTranslator.convertToDomainObject(lotRepository.find(id));
+        return lotLoader.getEntity(id);
     }
 
     public void deleteLotById(Long id){
-        Lot lot = lotTranslator.convertToDomainObject(lotRepository.find(id));
-        lot.getAuctioneer().getLots().removeIf(aucLot -> aucLot.getId().equals(id));
+        Lot lot = lotLoader.getEntity(id);
+        Auctioneer auctioneer = auctioneerTranslator.convertToDomainObject(auctioneerRepository.find(lotRepository.find(id).auctioneerId));
+        auctioneer.getLots().removeIf(aucLot -> aucLot.getId().equals(id));
         if (lot.getCurrentBid() != null)
             deleteBidById(lot.getCurrentBid().getId());
         lotRepository.delete(id);
     }
 
+    public void cancelLotById(Long id){
+        timers.get(id).cancel();
+    }
+
+    public void startLotById(Long id){
+        Lot lot = lotLoader.getEntity(id);
+        timers.get(id).schedule(new LotHandler(lot), (new Date()).getTime() + lot.getEndDate().getTime() - lot.getStartDate().getTime());
+    }
+    public void updateLot(Lot lot){
+        LotValueObject lotValueObjectValue = new LotValueObject();
+        lotValueObjectValue.id = lot.getId();
+        lotValueObjectValue.productId = lot.getProduct().getId();
+        lotValueObjectValue.auctioneerId = lotRepository.find(lot.getId()).auctioneerId;
+        lotValueObjectValue.startPrice = lot.getStartPrice();
+        lotValueObjectValue.startDate = lot.getStartDate();
+        lotValueObjectValue.endDate = lot.getEndDate();
+        if (lot.getCurrentBid() == null)
+            lotValueObjectValue.currentBidId = (long)0;
+        else
+            lotValueObjectValue.currentBidId = lot.getCurrentBid().getId();
+        lotRepository.update(lot.getId(), lotValueObjectValue);
+    }
+
     public HashSet<edu.core.java.auction.domain.Lot> getAllLots(){
-        Collection<LotValueObject> lotValueObjects = lotRepository.getAll();
-        HashSet<edu.core.java.auction.domain.Lot> lotsDomain =
-                new HashSet<edu.core.java.auction.domain.Lot>();
-
-        for (LotValueObject lotValueObjectValue : lotValueObjects){
-            lotsDomain.add(lotTranslator.convertToDomainObject(lotValueObjectValue));
-        }
-
-        return lotsDomain;
+        return lotLoader.getAllEntities();
     }
 }

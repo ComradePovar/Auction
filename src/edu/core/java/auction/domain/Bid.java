@@ -17,7 +17,15 @@ public class Bid extends DomainObject {
         return buyer;
     }
 
+    public void setBuyer(Buyer buyer){
+        this.buyer = buyer;
+    }
+
     public double getBidAmount(){
         return bidAmount;
+    }
+
+    public void setBidAmount(double bidAmount){
+        this.bidAmount = bidAmount;
     }
 }
