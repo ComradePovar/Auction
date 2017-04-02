@@ -1,48 +1,41 @@
 package edu.core.java.auction.translator;
 
+import edu.core.java.auction.AuctionService;
 import edu.core.java.auction.domain.Product;
+import edu.core.java.auction.loader.SellerLoader;
 import edu.core.java.auction.repository.SellerRepository;
 import edu.core.java.auction.vo.ProductValueObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * Created by Max on 09.03.2017.
  */
-public class ProductTranslator
-        implements Translator<ProductValueObject, Product> {
-    private SellerTranslator sellerTranslator;
-    private SellerRepository sellerRepository;
-
-    public ProductTranslator() {}
-    public ProductTranslator(SellerTranslator sellerTranslator, SellerRepository sellerRepository){
-        this.sellerRepository = sellerRepository;
-        this.sellerTranslator = sellerTranslator;
-    }
+public class ProductTranslator implements Translator<ProductValueObject, Product> {
+    protected Logger logger = LoggerFactory.getLogger(ProductTranslator.class);
 
     @Override
     public Product convertToDomainObject(ProductValueObject value) {
-        Product product = new Product(value.id, value.title, value.description,
-                sellerTranslator.convertToDomainObject(sellerRepository.find(value.ownerId)));
-        return product;
+        if (value == null){
+            logger.warn("Value object is null. Translation is not possible.");
+            return null;
+        }
+
+        logger.info("Conversion was successful.");
+        SellerLoader sellerLoader = AuctionService.getInstance().getSellerLoader();
+        return new Product(value.id, value.title, value.description, sellerLoader.getEntity(value.ownerId));
     }
 
     @Override
-    public ProductValueObject convertToValueObject(Product value) {
-        ProductValueObject productValueObject = new ProductValueObject();
-        productValueObject.id = value.getId();
-        productValueObject.title = value.getTitle();
-        productValueObject.description = value.getDescription();
-        if (value.getOwner() != null)
-            productValueObject.ownerId = value.getOwner().getId();
-        else
-            productValueObject.ownerId = (long)0;
-        return productValueObject;
-    }
+    public ProductValueObject convertToValueObject(Product domain) {
+        if (domain == null){
+            logger.warn("Domain object is null. Translation is not possible.");
+            return null;
+        }
 
-    public void setSellerTranslator(SellerTranslator sellerTranslator) {
-        this.sellerTranslator = sellerTranslator;
-    }
-
-    public void setSellerRepository(SellerRepository sellerRepository) {
-        this.sellerRepository = sellerRepository;
+        logger.info("Conversion was successful.");
+        return new ProductValueObject(domain.getId(), domain.getTitle(),
+                                      domain.getDescription(), domain.getOwner().getId());
     }
 }

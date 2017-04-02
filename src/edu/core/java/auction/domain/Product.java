@@ -8,10 +8,6 @@ public class Product extends DomainObject {
     private String description;
     private Seller owner;
 
-    public Product(Long id){
-        this.id = id;
-    }
-
     public Product(Long id, String title, String description, Seller owner){
         this.id = id;
         this.title = title;

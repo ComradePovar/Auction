@@ -1,45 +1,40 @@
 package edu.core.java.auction.translator;
 
+import edu.core.java.auction.AuctionService;
 import edu.core.java.auction.domain.Bid;
 import edu.core.java.auction.domain.Buyer;
+import edu.core.java.auction.loader.BuyerLoader;
 import edu.core.java.auction.repository.BuyerRepository;
 import edu.core.java.auction.vo.BidValueObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by Max on 09.03.2017.
  */
 public class BidTranslator implements Translator<BidValueObject, Bid> {
-    private BuyerTranslator buyerTranslator;
-    private BuyerRepository buyerRepository;
-
-    public BidTranslator(){}
-    public BidTranslator(BuyerTranslator buyerTranslator, BuyerRepository buyerRepository){
-        this.buyerTranslator = buyerTranslator;
-        this.buyerRepository = buyerRepository;
-    }
+    protected Logger logger = LoggerFactory.getLogger(BidTranslator.class);
 
     @Override
     public Bid convertToDomainObject(BidValueObject value) {
-        if (value == null)
+        if (value == null) {
+            logger.warn("Value object is null. Translation is not possible.");
             return null;
-        Buyer buyer = buyerTranslator.convertToDomainObject(buyerRepository.find(value.buyerId));
-        return new Bid(value.id, buyer, value.amount);
+        }
+
+        logger.info("Conversion was successful.");
+        BuyerLoader buyerLoader = AuctionService.getInstance().getBuyerLoader();
+        return new Bid(value.id, buyerLoader.getEntity(value.buyerId), value.amount);
     }
 
     @Override
-    public BidValueObject convertToValueObject(Bid value) {
-        BidValueObject bid = new BidValueObject();
-        bid.id = value.getId();
-        bid.amount = value.getBidAmount();
-        bid.buyerId = value.getBuyer().getId();
-        return bid;
-    }
+    public BidValueObject convertToValueObject(Bid domain) {
+        if (domain == null){
+            logger.warn("Value object is null. Translation is not possible.");
+            return null;
+        }
 
-    public void setBuyerTranslator(BuyerTranslator buyerTranslator){
-        this.buyerTranslator = buyerTranslator;
-    }
-
-    public void setBuyerRepository(BuyerRepository buyerRepository){
-        this.buyerRepository = buyerRepository;
+        logger.info("Conversion was successful.");
+        return new BidValueObject(domain.getId(), domain.getBuyer().getId(), domain.getBidAmount());
     }
 }

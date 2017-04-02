@@ -8,9 +8,25 @@ import java.util.Date;
  */
 public class LotValueObject extends ValueObject {
     public Long currentBidId;
-    public Long auctioneerId;
     public double startPrice;
-    public Date startDate;
     public Date endDate;
     public Long productId;
+
+    public LotValueObject() {
+    }
+
+    public LotValueObject(Long id, double startPrice, Date endDate,
+                          Long productId, Long currentBidId){
+        this.id = id;
+        this.currentBidId = currentBidId;
+        this.startPrice = startPrice;
+        this.endDate = endDate;
+        this.productId = productId;
+    }
+
+    @Override
+    public String toString(){
+        return "ID: " + id + "\nCurrent Bid ID: " + currentBidId + "\nStart price: " + startPrice +
+                "\nEnd date: " + endDate + "\nProduct ID: " + productId;
+    }
 }

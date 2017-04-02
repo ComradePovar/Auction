@@ -10,13 +10,11 @@ import java.util.Date;
 public class Lot extends DomainObject {
     private Bid currentBid;
     private double startPrice;
-    private Date startDate;
     private Date endDate;
     private Product product;
 
-    public Lot(Long id, double startPrice, Date startDate, Date endDate, Product product, Bid bid){
+    public Lot(Long id, double startPrice, Date endDate, Product product, Bid bid){
         this.id = id;
-        this.startDate = startDate;
         this.endDate = endDate;
         this.startPrice = startPrice;
         this.product = product;
@@ -27,18 +25,6 @@ public class Lot extends DomainObject {
         return startPrice;
     }
 
-    public void setCurrentBid(Bid bid) {
-        if (currentBid == null) {
-            if (startPrice <= bid.getBidAmount())
-                this.currentBid = bid;
-        } else {
-            if (bid.getBidAmount() > currentBid.getBidAmount())
-                this.currentBid = bid;
-            else
-                throw new NotImplementedException();
-        }
-    }
-
     public Bid getCurrentBid() {
         return currentBid;
     }
@@ -47,20 +33,12 @@ public class Lot extends DomainObject {
         return endDate;
     }
 
-    public void setStartDate(Date date){
-        this.startDate = date;
-    }
-
     public void setEndDate(Date date){
         this.endDate = date;
     }
 
     public Product getProduct() {
         return product;
-    }
-
-    public Date getStartDate(){
-        return startDate;
     }
 
     public void setProduct(Product product){

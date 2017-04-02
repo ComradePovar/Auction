@@ -1,5 +1,7 @@
 package edu.core.java.auction.vo;
 
+import edu.core.java.auction.domain.Buyer;
+
 import java.util.ArrayList;
 
 /**
@@ -8,4 +10,18 @@ import java.util.ArrayList;
 public class BuyerValueObject extends ValueObject{
     public String name;
     public double accountBalance;
+
+    public BuyerValueObject() {
+    }
+
+    public BuyerValueObject(Long id, String name, double accountBalance){
+        this.id = id;
+        this.name = name;
+        this.accountBalance = accountBalance;
+    }
+
+    @Override
+    public String toString(){
+        return "ID: " + id + "\nName: " + name + "\nAccount balance: " + accountBalance ;
+    }
 }

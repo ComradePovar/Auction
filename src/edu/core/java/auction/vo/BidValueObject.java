@@ -6,4 +6,18 @@ package edu.core.java.auction.vo;
 public class BidValueObject extends ValueObject {
     public Long buyerId;
     public double amount;
+
+    public BidValueObject() {
+    }
+
+    public BidValueObject(Long id, Long buyerId, double amount){
+        this.id = id;
+        this.buyerId = buyerId;
+        this.amount = amount;
+    }
+
+    @Override
+    public String toString(){
+        return "ID: " + id + "\nBuyer ID: " + buyerId + "\nAmount: " + amount;
+    }
 }
