@@ -12,6 +12,8 @@ import java.util.HashSet;
 /**
  * Created by Max on 09.03.2017.
  */
+//TODO
+//Загрузчик не должен знать о трансляторах
 public abstract class Loader<D extends DomainObject> {
     protected Repository repository;
     protected Translator translator;

@@ -28,4 +28,5 @@ public class Bid extends DomainObject {
     public void setBidAmount(double bidAmount){
         this.bidAmount = bidAmount;
     }
+
 }

@@ -155,8 +155,8 @@ public class AuctionService {
 
     // Operations with Buyer
 
-    public BuyerValueObject getBuyerById(Long id){
-        return buyerRepository.find(id);
+    public Buyer getBuyerById(Long id){
+        return buyerLoader.getEntity(id);
     }
 
     public BuyerValueObject createBuyer(String name, double accountBalance){
@@ -186,14 +186,14 @@ public class AuctionService {
         buyerRepository.delete(id);
     }
 
-    public Collection<BuyerValueObject> getAllBuyers(){
-        return buyerRepository.getAll();
+    public Collection<Buyer> getAllBuyers(){
+        return buyerLoader.getAllEntities();
     }
 
     // Operations with Seller
 
-    public SellerValueObject getSellerById(Long id){
-        return sellerRepository.find(id);
+    public Seller getSellerById(Long id){
+        return sellerLoader.getEntity(id);
     }
 
     public SellerValueObject createSeller(String name, double accountBalance, double commissionPercentage){
@@ -225,14 +225,14 @@ public class AuctionService {
         sellerRepository.delete(id);
     }
 
-    public Collection<SellerValueObject> getAllSellers(){
-        return sellerRepository.getAll();
+    public Collection<Seller> getAllSellers(){
+        return sellerLoader.getAllEntities();
     }
 
     // Operations with Product
 
-    public ProductValueObject getProductById(Long id){
-        return productRepository.find(id);
+    public Product getProductById(Long id){
+        return productLoader.getEntity(id);
     }
 
     public ProductValueObject createProduct(String title, String description, Long ownerId){
@@ -263,19 +263,18 @@ public class AuctionService {
         productRepository.delete(id);
     }
 
-    public Collection<ProductValueObject> getAllProducts(){
-        return productRepository.getAll();
+    public Collection<Product> getAllProducts(){
+        return productLoader.getAllEntities();
     }
 
     // Operations with Bid
 
-    public BidValueObject getBidById(Long id){
-        return bidRepository.find(id);
+    public Bid getBidById(Long id){
+        return bidLoader.getEntity(id);
     }
 
-    public BidValueObject createBid(Long buyerId, Long lotId, double bidAmount) {
-        BidValueObject bidValueObject = new BidValueObject(bidRepository.getMaxId() + 1, buyerId, bidAmount);
-        bidRepository.incMaxId();
+    public BidValueObject createBid(Long id, Long buyerId, Long lotId, double bidAmount) {
+        BidValueObject bidValueObject = new BidValueObject(id, buyerId, bidAmount);
 
         BuyerValueObject buyerValueObject = buyerRepository.find(buyerId);
         LotValueObject lotValueObject = lotRepository.find(lotId);
@@ -325,14 +324,14 @@ public class AuctionService {
         bidRepository.update(bid);
     }
 
-    public Collection<BidValueObject> getAllBids(){
-        return bidRepository.getAll();
+    public Collection<Bid> getAllBids(){
+        return bidLoader.getAllEntities();
     }
 
     // Operations with Lot
 
-    public LotValueObject getLotById(Long id){
-        return lotRepository.find(id);
+    public Lot getLotById(Long id){
+        return lotLoader.getEntity(id);
     }
 
     public LotValueObject createLot(double startPrice, Date endDate, Long productId){
@@ -366,7 +365,7 @@ public class AuctionService {
         lotRepository.update(lot);
     }
 
-    public Collection<LotValueObject> getAllLots(){
-        return lotRepository.getAll();
+    public Collection<Lot> getAllLots(){
+        return lotLoader.getAllEntities();
     }
 }

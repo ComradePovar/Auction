@@ -10,7 +10,7 @@ public class BidValueObject extends ValueObject {
     public BidValueObject() {
     }
 
-    public BidValueObject(Long id, Long buyerId, double amount){
+    public BidValueObject(Long id,  Long buyerId, double amount){
         this.id = id;
         this.buyerId = buyerId;
         this.amount = amount;

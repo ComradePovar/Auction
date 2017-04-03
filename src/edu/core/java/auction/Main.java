@@ -4,6 +4,7 @@ package edu.core.java.auction;
 import java.io.*;
 import java.text.ParseException;
 
+import edu.core.java.auction.domain.*;
 import edu.core.java.auction.repository.*;
 import edu.core.java.auction.vo.*;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -12,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 // TODO:
 // Торги
+// Runnable .jar
 public class Main {
     private static ObjectMapper mapper = new ObjectMapper();
     private static AuctionService service = AuctionService.getInstance();
@@ -22,7 +24,7 @@ public class Main {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         while (true){
             System.out.println("----------------------------------------------------");
-            System.out.println("1. Create entity.");
+            System.out.println("1. Add entity.");
             System.out.println("2. Delete entity.");
             System.out.println("3. Update entity.");
             System.out.println("4. Show entity.");
@@ -34,7 +36,7 @@ public class Main {
                 choice = Integer.parseInt(reader.readLine());
                 switch(choice) {
                     case 1 :
-                        createEntity();
+                        addExistedEntity();
                         break;
                     case 2 :
                         deleteEntity();
@@ -72,35 +74,36 @@ public class Main {
         int choice = Integer.parseInt(reader.readLine());
         switch(choice){
             case 1:
-                for(ProductValueObject product : service.getProductRepository().getAll()){
-                    System.out.println(product);
+                for(Product product : service.getAllProducts()){
+                    System.out.println(mapper.defaultPrettyPrintingWriter().writeValueAsString(product));
                 }
                 break;
             case 2:
-                for(BuyerValueObject buyer : service.getBuyerRepository().getAll()){
-                    System.out.println(buyer);
+                for(Buyer buyer : service.getAllBuyers()){
+                    System.out.println(mapper.defaultPrettyPrintingWriter().writeValueAsString(buyer));
                 }
                 break;
             case 3:
-                for(SellerValueObject seller : service.getSellerRepository().getAll()){
-                    System.out.println(seller);
+                for(Seller seller : service.getAllSellers()){
+                    System.out.println(mapper.defaultPrettyPrintingWriter().writeValueAsString(seller));
                 }
                 break;
             case 4:
-                for(LotValueObject lot : service.getLotRepository().getAll()){
-                    System.out.println(lot);
+                for(Lot lot : service.getAllLots()){
+                System.out.println(mapper.defaultPrettyPrintingWriter().writeValueAsString(lot));
                 }
                 break;
             case 5:
-                for(BidValueObject bid : service.getBidRepository().getAll()){
-                    System.out.println(bid);
+                for(Bid bid : service.getAllBids()){
+                System.out.println(mapper.defaultPrettyPrintingWriter().writeValueAsString(bid));
                 }
                 break;
             default:
                 logger.warn("Incorrect choice.");
         }
     }
-
+    //TODO
+    //Domain оъект вместо Value
     public static void showEntity() throws IOException, ParseException, NumberFormatException{
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         System.out.println("Enter entity ID: ");
@@ -115,24 +118,24 @@ public class Main {
         int choice2 = Integer.parseInt(reader.readLine());
         switch(choice2){
             case 1 :
-                ProductValueObject product = service.getProductById(id);
-                System.out.println(product);
+                Product product = service.getProductById(id);
+                System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(product));
                 break;
             case 2 :
-                BuyerValueObject buyer = service.getBuyerById(id);
-                System.out.println(buyer);
+                Buyer buyer = service.getBuyerById(id);
+                System.out.println(mapper.defaultPrettyPrintingWriter().writeValueAsString(buyer));
                 break;
             case 3 :
-                SellerValueObject seller = service.getSellerById(id);
-                System.out.println(seller);
+                Seller seller = service.getSellerById(id);
+                System.out.println(mapper.defaultPrettyPrintingWriter().writeValueAsString(seller));
                 break;
             case 4 :
-                LotValueObject lot = service.getLotById(id);
-                System.out.println(lot);
+                Lot lot = service.getLotById(id);
+                System.out.println(mapper.defaultPrettyPrintingWriter().writeValueAsString(lot));
                 break;
             case 5 :
-                BidValueObject bid = service.getBidById(id);
-                System.out.println(bid);
+                Bid bid = service.getBidById(id);
+                System.out.println(mapper.defaultPrettyPrintingWriter().writeValueAsString(bid));
                 break;
             case 6 :
                 break;
@@ -381,8 +384,10 @@ public class Main {
                 break;
         }
     }
-    private static void addExistedEntity(String filePath) throws IOException {
+    private static void addExistedEntity() throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        System.out.println("Enter file path: ");
+        String filePath = reader.readLine();
         System.out.println("Enter type of entity (1-Product, 2-Buyer, 3-Seller, 4-Lot, 5-Bid):");
         int choice = Integer.parseInt(reader.readLine());
         switch (choice) {
@@ -451,21 +456,17 @@ public class Main {
         }
     }
 
-    public static void createEntity() throws IOException, ParseException, NumberFormatException{
+    public static void createNewEntity() throws IOException, ParseException, NumberFormatException{
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         System.out.println("Enter file path: ");
-        String filePath;
-        filePath = reader.readLine();
+        String filePath = reader.readLine();
         File file = new File(filePath);
-        int choice;
+
         if (file.exists()){
-            System.out.println("File with the same name already exists. Do you want to rewrite it?(1-Yes / 2-No)");
-            choice = Integer.parseInt(reader.readLine());
-            if (choice == 2) {
-                addExistedEntity(filePath);
-                return;
-            }
+            logger.warn("File with the same name already exists.");
+            return;
         }
+
         System.out.println("1. Create product.");
         System.out.println("2. Create buyer.");
         System.out.println("3. Create seller.");
@@ -473,7 +474,7 @@ public class Main {
         System.out.println("5. Create bid.");
         System.out.println("6. Main menu.");
         System.out.println("----------------------------------------------------");
-        choice = Integer.parseInt(reader.readLine());
+        int choice = Integer.parseInt(reader.readLine());
         switch(choice){
             case 1 :
                 System.out.print("Title: ");
@@ -526,7 +527,7 @@ public class Main {
                 String bidAmount = reader.readLine();
                 System.out.println("Lot ID: ");
                 String bidLotId = reader.readLine();
-                BidValueObject bid = service.createBid(Long.parseLong(bidBuyerId), Long.parseLong(bidLotId),
+                BidValueObject bid = service.createBid(0L, Long.parseLong(bidBuyerId), Long.parseLong(bidLotId),
                         Double.parseDouble(bidAmount));
                 mapper.writeValue(new FileOutputStream(filePath), bid);
                 logger.info("Bid with id = " + bid.id + " was created.");
