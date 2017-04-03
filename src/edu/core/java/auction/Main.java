@@ -120,6 +120,7 @@ public class Main {
             case 1 :
                 Product product = service.getProductById(id);
                 System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(product));
+                System.out.println();
                 break;
             case 2 :
                 Buyer buyer = service.getBuyerById(id);
