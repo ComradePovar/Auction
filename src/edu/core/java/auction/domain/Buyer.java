@@ -1,9 +1,5 @@
 package edu.core.java.auction.domain;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
-import java.util.HashSet;
-
 /**
  * Created by Maxim on 19.02.2017.
  */

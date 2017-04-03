@@ -2,7 +2,6 @@ package edu.core.java.auction.translator;
 
 import edu.core.java.auction.domain.DomainObject;
 import edu.core.java.auction.vo.ValueObject;
-import org.slf4j.LoggerFactory;
 
 /**
  * Created by Max on 09.03.2017.

@@ -3,11 +3,9 @@ package edu.core.java.auction.translator;
 import edu.core.java.auction.AuctionService;
 import edu.core.java.auction.domain.Product;
 import edu.core.java.auction.loader.SellerLoader;
-import edu.core.java.auction.repository.SellerRepository;
 import edu.core.java.auction.vo.ProductValueObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * Created by Max on 09.03.2017.

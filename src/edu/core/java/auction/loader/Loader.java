@@ -1,10 +1,8 @@
 package edu.core.java.auction.loader;
 
 import edu.core.java.auction.domain.DomainObject;
-import edu.core.java.auction.domain.Lot;
 import edu.core.java.auction.repository.Repository;
 import edu.core.java.auction.translator.Translator;
-import edu.core.java.auction.vo.LotValueObject;
 import edu.core.java.auction.vo.ValueObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

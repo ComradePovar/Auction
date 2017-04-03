@@ -1,7 +1,5 @@
 package edu.core.java.auction.domain;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 import java.util.Date;
 
 /**

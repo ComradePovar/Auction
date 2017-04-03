@@ -5,7 +5,8 @@ import edu.core.java.auction.loader.*;
 import edu.core.java.auction.repository.*;
 import edu.core.java.auction.translator.*;
 import edu.core.java.auction.vo.*;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -18,6 +19,7 @@ public class AuctionService {
     private static AuctionService instance = new AuctionService();
     private DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
     private HashMap<Long, Timer> timers = new HashMap<>();
+    private static Logger logger = LoggerFactory.getLogger(AuctionService.class);
 
     private class LotHandler extends TimerTask{
         private Long lotId;
@@ -284,7 +286,8 @@ public class AuctionService {
                 if (oldBidValueObject.amount < bidAmount) {
                     deleteBidById(oldBidValueObject.id);
                 } else {
-                    throw new NotImplementedException();
+                    logger.info("Old bid amount is more than new bid amount.");
+                    return null;
                 }
             }
 
@@ -294,7 +297,8 @@ public class AuctionService {
             lotRepository.update(lotValueObject);
             bidRepository.add(bidValueObject);
         } else {
-            throw new NotImplementedException();
+            logger.info("Buyer doesn't have enough money to make this bid.");
+            return null;
         }
 
         return bidValueObject;

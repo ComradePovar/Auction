@@ -2,9 +2,7 @@ package edu.core.java.auction.translator;
 
 import edu.core.java.auction.AuctionService;
 import edu.core.java.auction.domain.Bid;
-import edu.core.java.auction.domain.Buyer;
 import edu.core.java.auction.loader.BuyerLoader;
-import edu.core.java.auction.repository.BuyerRepository;
 import edu.core.java.auction.vo.BidValueObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

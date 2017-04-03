@@ -1,22 +1,17 @@
 package edu.core.java.auction;
 
-import edu.core.java.auction.domain.*;
 
 import java.io.*;
 import java.text.ParseException;
-import java.util.TimerTask;
 
 import edu.core.java.auction.repository.*;
 import edu.core.java.auction.vo.*;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 // TODO:
 // Торги
-// Ограничение целостности
 public class Main {
     private static ObjectMapper mapper = new ObjectMapper();
     private static AuctionService service = AuctionService.getInstance();

@@ -1,13 +1,9 @@
 package edu.core.java.auction.translator;
 
-import edu.core.java.auction.domain.Bid;
 import edu.core.java.auction.domain.Buyer;
-import edu.core.java.auction.repository.BidRepository;
-import edu.core.java.auction.vo.BidValueObject;
 import edu.core.java.auction.vo.BuyerValueObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * Created by Max on 09.03.2017.

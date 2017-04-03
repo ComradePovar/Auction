@@ -4,7 +4,6 @@ import edu.core.java.auction.domain.Seller;
 import edu.core.java.auction.vo.SellerValueObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * Created by Max on 09.03.2017.
