@@ -5,13 +5,15 @@ package edu.core.java.auction.vo;
  */
 public class BidValueObject extends ValueObject {
     public Long buyerId;
+    public Long lotId;
     public double amount;
 
     public BidValueObject() {
     }
 
-    public BidValueObject(Long id,  Long buyerId, double amount){
+    public BidValueObject(Long id, Long lotId, Long buyerId, double amount){
         this.id = id;
+        this.lotId = lotId;
         this.buyerId = buyerId;
         this.amount = amount;
     }

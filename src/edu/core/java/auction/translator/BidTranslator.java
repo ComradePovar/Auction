@@ -23,7 +23,8 @@ public class BidTranslator implements Translator<BidValueObject, Bid> {
 
         logger.info("Conversion was successful.");
         BuyerLoader buyerLoader = AuctionService.getInstance().getBuyerLoader();
-        return new Bid(value.id, buyerLoader.getEntity(value.buyerId), value.amount);
+        LotLoader lotLoader = AuctionService.getInstance().getLotLoader();
+        return new Bid(value.id, lotLoader.getEntity(value.lotId), buyerLoader.getEntity(value.buyerId), value.amount);
     }
 
     @Override
@@ -34,6 +35,6 @@ public class BidTranslator implements Translator<BidValueObject, Bid> {
         }
 
         logger.info("Conversion was successful.");
-        return new BidValueObject(domain.getId(), domain.getBuyer().getId(), domain.getBidAmount());
+        return new BidValueObject(domain.getId(), domain.getLot().getId(), domain.getBuyer().getId(), domain.getBidAmount());
     }
 }

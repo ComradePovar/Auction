@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 // TODO:
 // Торги
 // Runnable .jar
+// В auctionservice возвращаемые и принимаемые типы domain и value поменять местами
 public class Main {
     private static ObjectMapper mapper = new ObjectMapper();
     private static AuctionService service = AuctionService.getInstance();
@@ -75,35 +76,34 @@ public class Main {
         switch(choice){
             case 1:
                 for(Product product : service.getAllProducts()){
-                    System.out.println(mapper.defaultPrettyPrintingWriter().writeValueAsString(product));
+                    System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(product));
                 }
                 break;
             case 2:
                 for(Buyer buyer : service.getAllBuyers()){
-                    System.out.println(mapper.defaultPrettyPrintingWriter().writeValueAsString(buyer));
+                    System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(buyer));
                 }
                 break;
             case 3:
                 for(Seller seller : service.getAllSellers()){
-                    System.out.println(mapper.defaultPrettyPrintingWriter().writeValueAsString(seller));
+                    System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(seller));
                 }
                 break;
             case 4:
                 for(Lot lot : service.getAllLots()){
-                System.out.println(mapper.defaultPrettyPrintingWriter().writeValueAsString(lot));
+                System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(lot));
                 }
                 break;
             case 5:
                 for(Bid bid : service.getAllBids()){
-                System.out.println(mapper.defaultPrettyPrintingWriter().writeValueAsString(bid));
+                System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(bid));
                 }
                 break;
             default:
                 logger.warn("Incorrect choice.");
         }
     }
-    //TODO
-    //Domain оъект вместо Value
+
     public static void showEntity() throws IOException, ParseException, NumberFormatException{
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         System.out.println("Enter entity ID: ");
@@ -124,19 +124,19 @@ public class Main {
                 break;
             case 2 :
                 Buyer buyer = service.getBuyerById(id);
-                System.out.println(mapper.defaultPrettyPrintingWriter().writeValueAsString(buyer));
+                System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(buyer));
                 break;
             case 3 :
                 Seller seller = service.getSellerById(id);
-                System.out.println(mapper.defaultPrettyPrintingWriter().writeValueAsString(seller));
+                System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(seller));
                 break;
             case 4 :
                 Lot lot = service.getLotById(id);
-                System.out.println(mapper.defaultPrettyPrintingWriter().writeValueAsString(lot));
+                System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(lot));
                 break;
             case 5 :
                 Bid bid = service.getBidById(id);
-                System.out.println(mapper.defaultPrettyPrintingWriter().writeValueAsString(bid));
+                System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(bid));
                 break;
             case 6 :
                 break;
@@ -323,9 +323,8 @@ public class Main {
 
                 do {
                     System.out.println("1. Edit end date.");
-                    System.out.println("2. Delete current bid id.");
-                    System.out.println("3. Replace product id.");
-                    System.out.println("4. Main menu.");
+                    System.out.println("2. Replace product id.");
+                    System.out.println("3. Main menu.");
                     choice = Integer.parseInt(reader.readLine());
                     switch (choice) {
                         case 1:
@@ -336,22 +335,17 @@ public class Main {
                             logger.info("Lot with ID = " + lot.id + " was updated.");
                             break;
                         case 2:
-                            lot.currentBidId = 0L;
-                            service.updateLot(lot);
-                            logger.info("Lot with ID = " + lot.id + " was updated.");
-                            break;
-                        case 3:
                             System.out.print("Enter new product id: ");
                             lot.productId = Long.parseLong(reader.readLine());
                             service.updateLot(lot);
                             logger.info("Lot with ID = " + lot.id + " was updated.");
                             break;
-                        case 4:
+                        case 3:
                             break;
                         default:
                             logger.warn("Incorrect choice.");
                     }
-                } while(choice != 4);
+                } while(choice != 3);
 
                 mapper.writeValue(new FileOutputStream(filePath), lot);
                 logger.info("File with lot ID = " + lot.id + " was rewrote.");
@@ -448,92 +442,8 @@ public class Main {
                     logger.warn("Lot with id = " + bidValueObject.id + " already exists.");
                     return;
                 }
-                bidRepository.add(bidValueObject);
-                bidRepository.incMaxId();
+                service.createBid(bidValueObject.id, bidValueObject.buyerId, bidValueObject.lotId, bidValueObject.amount);
                 logger.info("Bid with id = " + bidValueObject.id + " was added to repository.");
-                break;
-            default:
-                logger.warn("Incorrect choice.");
-        }
-    }
-
-    public static void createNewEntity() throws IOException, ParseException, NumberFormatException{
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        System.out.println("Enter file path: ");
-        String filePath = reader.readLine();
-        File file = new File(filePath);
-
-        if (file.exists()){
-            logger.warn("File with the same name already exists.");
-            return;
-        }
-
-        System.out.println("1. Create product.");
-        System.out.println("2. Create buyer.");
-        System.out.println("3. Create seller.");
-        System.out.println("4. Create lot.");
-        System.out.println("5. Create bid.");
-        System.out.println("6. Main menu.");
-        System.out.println("----------------------------------------------------");
-        int choice = Integer.parseInt(reader.readLine());
-        switch(choice){
-            case 1 :
-                System.out.print("Title: ");
-                String prodTitle = reader.readLine();
-                System.out.print("Description: ");
-                String prodDescr = reader.readLine();
-                System.out.print("Owner ID: ");
-                String prodOwnerId = reader.readLine();
-                ProductValueObject product = service.createProduct(prodTitle, prodDescr, Long.parseLong(prodOwnerId));
-                mapper.writeValue(new FileOutputStream(filePath), product);
-                logger.info("Product with id = " + product.id + " was created.");
-                break;
-            case 2 :
-                System.out.println("Name: ");
-                String buyerName = reader.readLine();
-                System.out.println("Account balance: ");
-                String buyerAccountBalance = reader.readLine();
-                BuyerValueObject buyer = service.createBuyer(buyerName, Double.parseDouble(buyerAccountBalance));
-                mapper.writeValue(new FileOutputStream(filePath), buyer);
-                logger.info("Buyer with id = " + buyer.id + " was created.");
-                break;
-            case 3 :
-                System.out.println("Name: ");
-                String sellerName = reader.readLine();
-                System.out.println("Account balance: ");
-                String sellerAccountBalance = reader.readLine();
-                System.out.println("Commission percentage: ");
-                String comissionPercentage = reader.readLine();
-                SellerValueObject seller = service.createSeller(sellerName, Double.parseDouble(sellerAccountBalance),
-                        Double.parseDouble(comissionPercentage));
-                mapper.writeValue(new FileOutputStream(filePath), seller);
-                logger.info("Seller with id = " + seller.id + " was created.");
-                break;
-            case 4 :
-                System.out.println("Start price: ");
-                String lotStartPrice = reader.readLine();
-                System.out.println("End date: ");
-                String lotEndDate = reader.readLine();
-                System.out.println("Product ID: ");
-                String lotProductId = reader.readLine();
-                LotValueObject lot = service.createLot(Double.parseDouble(lotStartPrice),
-                        service.getDateFormat().parse(lotEndDate), Long.parseLong(lotProductId));
-                mapper.writeValue(new FileOutputStream(filePath), lot);
-                logger.info("LotValueObject with id = " + lot.id + " was created.");
-                break;
-            case 5 :
-                System.out.println("Buyer ID: ");
-                String bidBuyerId = reader.readLine();
-                System.out.println("Bid amount: ");
-                String bidAmount = reader.readLine();
-                System.out.println("Lot ID: ");
-                String bidLotId = reader.readLine();
-                BidValueObject bid = service.createBid(0L, Long.parseLong(bidBuyerId), Long.parseLong(bidLotId),
-                        Double.parseDouble(bidAmount));
-                mapper.writeValue(new FileOutputStream(filePath), bid);
-                logger.info("Bid with id = " + bid.id + " was created.");
-                break;
-            case 6 :
                 break;
             default:
                 logger.warn("Incorrect choice.");

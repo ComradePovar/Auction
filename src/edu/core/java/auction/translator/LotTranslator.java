@@ -23,9 +23,7 @@ public class LotTranslator implements Translator<LotValueObject, Lot> {
 
         logger.info("Conversion was successful.");
         ProductLoader productLoader = AuctionService.getInstance().getProductLoader();
-        BidLoader bidLoader = AuctionService.getInstance().getBidLoader();
-        return new Lot(value.id, value.startPrice, value.endDate,
-                       productLoader.getEntity(value.productId), bidLoader.getEntity(value.currentBidId));
+        return new Lot(value.id, value.endDate, productLoader.getEntity(value.productId), value.currentPrice);
     }
 
     @Override
@@ -36,7 +34,7 @@ public class LotTranslator implements Translator<LotValueObject, Lot> {
         }
 
         logger.info("Conversion was successful.");
-        return new LotValueObject(domain.getId(), domain.getStartPrice(), domain.getEndDate(),
-                                  domain.getProduct().getId(), domain.getCurrentBid().getId());
+        return new LotValueObject(domain.getId(), domain.getEndDate(),domain.getProduct().getId(),
+                                  domain.getCurrentPrice());
     }
 }

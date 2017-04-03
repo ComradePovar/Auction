@@ -30,26 +30,26 @@ public class AuctionService {
 
         @Override
         public void run() {
-            LotValueObject lotValueObject = lotRepository.find(lotId);
-            ProductValueObject productValueObject = productRepository.find(lotValueObject.productId);
-
-            System.out.println("Auction has ended. Product name: " + productValueObject.title);
-            if (lotValueObject.currentBidId != 0){
-                BidValueObject bidValueObject = bidRepository.find(lotValueObject.currentBidId);
-                BuyerValueObject winner = buyerRepository.find(bidValueObject.buyerId);
-
-                SellerValueObject sellerValueObject = sellerRepository.find(productValueObject.ownerId);
-                sellerValueObject.accountBalance += bidValueObject.amount * (100 - sellerValueObject.commissionPercentage)/100;
-                sellerRepository.update(sellerValueObject);
-                productRepository.delete(productValueObject.id);
-                bidRepository.delete(lotValueObject.currentBidId);
-                System.out.println("The winner is " + winner.name);
-            } else {
-                System.out.println("No winner.");
-            }
-
-            lotRepository.delete(lotId);
-            timers.remove(lotId);
+//            LotValueObject lotValueObject = lotRepository.find(lotId);
+//            ProductValueObject productValueObject = productRepository.find(lotValueObject.productId);
+//
+//            System.out.println("Auction has ended. Product name: " + productValueObject.title);
+//            if (lotValueObject.currentBidId != 0){
+//                BidValueObject bidValueObject = bidRepository.find(lotValueObject.currentBidId);
+//                BuyerValueObject winner = buyerRepository.find(bidValueObject.buyerId);
+//
+//                SellerValueObject sellerValueObject = sellerRepository.find(productValueObject.ownerId);
+//                sellerValueObject.accountBalance += bidValueObject.amount * (100 - sellerValueObject.commissionPercentage)/100;
+//                sellerRepository.update(sellerValueObject);
+//                productRepository.delete(productValueObject.id);
+//                bidRepository.delete(lotValueObject.currentBidId);
+//                System.out.println("The winner is " + winner.name);
+//            } else {
+//                System.out.println("No winner.");
+//            }
+//
+//            lotRepository.delete(lotId);
+//            timers.remove(lotId);
         }
     }
 
@@ -274,15 +274,20 @@ public class AuctionService {
     }
 
     public BidValueObject createBid(Long id, Long buyerId, Long lotId, double bidAmount) {
-        BidValueObject bidValueObject = new BidValueObject(id, buyerId, bidAmount);
+        BidValueObject bidValueObject = new BidValueObject(id, lotId, buyerId, bidAmount);
 
         BuyerValueObject buyerValueObject = buyerRepository.find(buyerId);
         LotValueObject lotValueObject = lotRepository.find(lotId);
 
-        if (buyerValueObject.accountBalance >= bidAmount && bidAmount >= lotValueObject.startPrice) {
-            if (lotValueObject.currentBidId != 0) {
-                BidValueObject oldBidValueObject = bidRepository.find(lotValueObject.currentBidId);
-                if (oldBidValueObject.amount < bidAmount) {
+        if (buyerValueObject.accountBalance >= bidAmount && bidAmount >= lotValueObject.currentPrice) {
+            BidValueObject oldBidValueObject = null;
+            for(BidValueObject bidVO : bidRepository.getAll()) {
+                if (bidVO.lotId.equals(lotValueObject.id))
+                    oldBidValueObject = bidVO;
+            }
+
+            if (oldBidValueObject != null){
+                if (oldBidValueObject.amount < bidAmount){
                     deleteBidById(oldBidValueObject.id);
                 } else {
                     logger.info("Old bid amount is more than new bid amount.");
@@ -290,7 +295,7 @@ public class AuctionService {
                 }
             }
 
-            lotValueObject.currentBidId = bidValueObject.id;
+            lotValueObject.currentPrice = bidValueObject.amount;
             buyerValueObject.accountBalance -= bidAmount;
             buyerRepository.update(buyerValueObject);
             lotRepository.update(lotValueObject);
@@ -307,14 +312,6 @@ public class AuctionService {
         BidValueObject bidValueObject = bidRepository.find(id);
         BuyerValueObject buyerValueObject = buyerRepository.find(bidValueObject.buyerId);
         buyerValueObject.accountBalance += bidValueObject.amount;
-
-        for (LotValueObject lotValueObject : lotRepository.getAll()){
-            if (lotValueObject.currentBidId.equals(id)){
-                lotValueObject.currentBidId = (long)0;
-                lotRepository.update(lotValueObject);
-                break;
-            }
-        }
 
         buyerRepository.update(buyerValueObject);
         bidRepository.delete(id);
@@ -334,14 +331,12 @@ public class AuctionService {
         return lotLoader.getEntity(id);
     }
 
-    public LotValueObject createLot(double startPrice, Date endDate, Long productId){
-        LotValueObject lotValueObject = new LotValueObject(lotRepository.getMaxId() + 1, startPrice,
-                endDate, productId, (long)0);
-        lotRepository.incMaxId();
+    public LotValueObject createLot(Long id, double startPrice, Date endDate, Long productId){
+        LotValueObject lotValueObject = new LotValueObject(id, endDate, productId, startPrice);
         lotRepository.add(lotValueObject);
 
         Product product = productTranslator.convertToDomainObject(productRepository.find(productId));
-        Lot lot = new Lot(lotValueObject.id, startPrice, endDate, productLoader.getEntity(productId), null);
+        Lot lot = new Lot(lotValueObject.id, endDate, productLoader.getEntity(productId), startPrice);
 
 //        Timer timer = new Timer();
 //        timer.schedule(new LotHandler(lot.getId()), endDate.getTime() - (new Date()).getTime());
@@ -355,8 +350,14 @@ public class AuctionService {
     public void deleteLotById(Long id){
         LotValueObject lotValueObject = lotRepository.find(id);
 
-        if (lotValueObject.currentBidId != 0)
-            deleteBidById(lotValueObject.currentBidId);
+        Long bidId = null;
+        for(BidValueObject bidValueObject : bidRepository.getAll()){
+            if (bidValueObject.lotId.equals(id)){
+                bidId = bidValueObject.id;
+                break;
+            }
+        }
+        deleteBidById(bidId);
 
         lotRepository.delete(id);
     }

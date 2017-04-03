@@ -6,25 +6,19 @@ import java.util.Date;
  * Created by Maxim on 19.02.2017.
  */
 public class Lot extends DomainObject {
-    private Bid currentBid;
-    private double startPrice;
+    private double currentPrice;
     private Date endDate;
     private Product product;
 
-    public Lot(Long id, double startPrice, Date endDate, Product product, Bid bid){
+    public Lot(Long id, Date endDate, Product product, double currentPrice){
         this.id = id;
         this.endDate = endDate;
-        this.startPrice = startPrice;
         this.product = product;
-        this.currentBid = bid;
+        this.currentPrice = currentPrice;
     }
 
-    public double getStartPrice(){
-        return startPrice;
-    }
-
-    public Bid getCurrentBid() {
-        return currentBid;
+    public double getCurrentPrice() {
+        return currentPrice;
     }
 
     public Date getEndDate() {
